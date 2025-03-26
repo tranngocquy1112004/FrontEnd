@@ -1,15 +1,9 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
-import { AuthContext } from "../account/AuthContext";
 import "./CartPage.css";
 
-const MESSAGES = {
-  EMPTY_CART: "Giỏ hàng trống",
-  CHECKOUT_SUCCESS: "Đặt hàng thành công!",
-  LOGIN_REQUIRED: "Vui lòng đăng nhập để tiếp tục!",
-};
-
+// Component: CartItem
 const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
   const isDecreaseDisabled = item.quantity === 1;
 
@@ -17,7 +11,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
     <li className="cart-item">
       <img src={item.image} alt={item.name} className="cart-image" />
       <p className="cart-name">{item.name}</p>
-      <p className="cart-price">💰 {item.price.toLocaleString("vi-VN")} VNĐ</p>
+      <p className="cart-price">💰 {item.price} VNĐ</p>
 
       <div className="quantity-controls">
         <button
@@ -41,23 +35,17 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 const CartPage = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } =
     useContext(CartContext);
-  const authContext = useContext(AuthContext);
-  const { isLoggedIn } = authContext || { isLoggedIn: false };
   const navigate = useNavigate();
 
+  // Calculate total price
   const totalPrice = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
+  // Handle checkout
   const handleCheckout = () => {
-    if (!isLoggedIn) {
-      alert(MESSAGES.LOGIN_REQUIRED);
-      navigate("/");
-      return;
-    }
-
-    alert(MESSAGES.CHECKOUT_SUCCESS);
+    alert("Đặt hàng thành công!");
     clearCart();
     navigate("/home");
   };
@@ -67,7 +55,7 @@ const CartPage = () => {
       <h2>🛍 Giỏ Hàng</h2>
 
       {cart.length === 0 ? (
-        <p className="empty-cart-message">{MESSAGES.EMPTY_CART}</p>
+        <p className="empty-cart-message">Giỏ hàng trống</p>
       ) : (
         <>
           <ul className="cart-list">
@@ -82,9 +70,7 @@ const CartPage = () => {
             ))}
           </ul>
 
-          <h3 className="total-price">
-            Tổng tiền: {totalPrice.toLocaleString("vi-VN")} VNĐ
-          </h3>
+          <h3 className="total-price">Tổng tiền: {totalPrice} VNĐ</h3>
 
           <button className="checkout-button" onClick={handleCheckout}>
             🛍 Mua hàng
@@ -92,6 +78,7 @@ const CartPage = () => {
         </>
       )}
 
+      {/* Wrapper div để căn giữa nút "Quay lại" */}
       <div className="back-button-container">
         <Link to="/home" className="back-button">
           ⬅ Quay lại cửa hàng

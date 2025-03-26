@@ -1,101 +1,111 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../account/AuthContext";
 import "./Account.css";
+
+const LOCAL_STORAGE_KEYS = {
+  USERS: "users",
+  CURRENT_USER: "currentUser",
+};
+
+const MESSAGES = {
+  EMPTY_FIELDS: "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!",
+  USER_EXISTS: "Tên đăng nhập đã tồn tại!",
+  REGISTER_SUCCESS: "Đăng ký thành công! Hãy đăng nhập.",
+  LOGIN_SUCCESS: "Đăng nhập thành công!",
+  LOGIN_FAILED: "Sai thông tin đăng nhập",
+  LOGOUT_SUCCESS: "Đăng xuất thành công!",
+};
 
 const Account = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const authContext = useContext(AuthContext);
+  const { isLoggedIn, login, logout } = authContext || { isLoggedIn: false, login: () => {}, logout: () => {} };
+
   const [isRegistering, setIsRegistering] = useState(false);
   const [user, setUser] = useState({ username: "", password: "" });
-  const [currentUser, setCurrentUser] = useState(null);
   const [loginMessage, setLoginMessage] = useState("");
 
   useEffect(() => {
-    // Kiểm tra người dùng đã đăng nhập từ localStorage
-    const checkLoggedInUser = () => {
-      const savedUser = JSON.parse(localStorage.getItem("currentUser"));
-      if (savedUser) {
-        setIsLoggedIn(true);
-        setCurrentUser(savedUser);
-      }
-    };
-    checkLoggedInUser();
-  }, []);
-
-  // Chuyển hướng khi isLoggedIn thay đổi
-  useEffect(() => {
-    if (isLoggedIn && currentUser) {
-      setTimeout(() => {
-        navigate("/home");
-      }, 1000); // Chờ 1 giây để hiển thị thông báo nếu cần
+    if (isLoggedIn) {
+      setTimeout(() => navigate("/home"), 1000);
     }
-  }, [isLoggedIn, currentUser, navigate]);
+  }, [isLoggedIn, navigate]);
 
   const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setUser((prevUser) => ({ ...prevUser, [name]: value }));
     setLoginMessage("");
   };
 
   const handleRegister = () => {
-    if (!user.username.trim() || !user.password.trim()) {
-      setLoginMessage("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+    const { username, password } = user;
+
+    if (!username.trim() || !password.trim()) {
+      setLoginMessage(MESSAGES.EMPTY_FIELDS);
       return;
     }
 
-    let storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-
-    if (storedUsers.some((u) => u.username === user.username)) {
-      setLoginMessage("Tên đăng nhập đã tồn tại!");
+    const storedUsers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USERS)) || [];
+    if (storedUsers.some((u) => u.username === username)) {
+      setLoginMessage(MESSAGES.USER_EXISTS);
       return;
     }
 
-    storedUsers.push(user);
-    localStorage.setItem("users", JSON.stringify(storedUsers));
+    const updatedUsers = [...storedUsers, { username, password }];
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USERS, JSON.stringify(updatedUsers));
 
-    setLoginMessage("Đăng ký thành công! Hãy đăng nhập.");
+    setLoginMessage(MESSAGES.REGISTER_SUCCESS);
     setUser({ username: "", password: "" });
-    setTimeout(() => {
-      setIsRegistering(false);
-    }, 1000);
+    setTimeout(() => setIsRegistering(false), 1000);
   };
 
   const handleLogin = () => {
-    if (!user.username.trim() || !user.password.trim()) {
-      setLoginMessage("Vui lòng nhập tên đăng nhập và mật khẩu!");
+    const { username, password } = user;
+
+    if (!username.trim() || !password.trim()) {
+      setLoginMessage(MESSAGES.EMPTY_FIELDS);
       return;
     }
 
-    let storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const storedUsers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USERS)) || [];
     const foundUser = storedUsers.find(
-      (u) => u.username === user.username && u.password === user.password
+      (u) => u.username === username && u.password === password
     );
 
     if (foundUser) {
-      localStorage.setItem("currentUser", JSON.stringify(foundUser));
-      setIsLoggedIn(true);
-      setCurrentUser(foundUser);
-      setLoginMessage("Đăng nhập thành công!");
-      setTimeout(() => {
-        navigate("/home"); // Chuyển hướng ngay về /home
-      }, 1000);
+      login(foundUser);
+      setLoginMessage(MESSAGES.LOGIN_SUCCESS);
     } else {
-      setLoginMessage("Sai thông tin đăng nhập");
+      setLoginMessage(MESSAGES.LOGIN_FAILED);
     }
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setCurrentUser(null);
-    localStorage.removeItem("currentUser");
-    // Không cần navigate, để người dùng ở trang Account
+    logout(); // Gọi hàm logout từ AuthContext
+    setLoginMessage(MESSAGES.LOGOUT_SUCCESS);
+    setUser({ username: "", password: "" }); // Reset form
+    setTimeout(() => navigate("/"), 1000); // Điều hướng về trang đăng nhập
   };
 
   return (
     <div className="account-container">
       <div className="account-box">
-        <h1>{isLoggedIn ? `Xin chào, ${currentUser?.username}!` : "Đăng nhập / Đăng ký"}</h1>
+        <h1>{isLoggedIn ? `Xin chào, ${user?.username || "Người dùng"}!` : "Đăng nhập / Đăng ký"}</h1>
 
-        {!isLoggedIn && (
+        {isLoggedIn ? (
+          <div>
+            <p>Bạn đã đăng nhập thành công!</p>
+            <button className="account-button logout-btn" onClick={handleLogout}>
+              Đăng xuất
+            </button>
+            {loginMessage && (
+              <p className={`login-message ${loginMessage.includes("thành công") ? "success" : ""}`}>
+                {loginMessage}
+              </p>
+            )}
+          </div>
+        ) : (
           <div>
             <input
               type="text"
@@ -114,17 +124,18 @@ const Account = () => {
               onChange={handleChange}
             />
             {loginMessage && (
-              <p className={`login-message ${loginMessage.includes("thành công") ? "success" : ""}`}>
+              <p
+                className={`login-message ${
+                  loginMessage.includes("thành công") ? "success" : ""
+                }`}
+              >
                 {loginMessage}
               </p>
             )}
             <div className="account-buttons">
               {isRegistering ? (
                 <>
-                  <button
-                    className="account-button register-btn"
-                    onClick={handleRegister}
-                  >
+                  <button className="account-button register-btn" onClick={handleRegister}>
                     Đăng ký
                   </button>
                   <button
@@ -136,10 +147,7 @@ const Account = () => {
                 </>
               ) : (
                 <>
-                  <button
-                    className="account-button login-btn"
-                    onClick={handleLogin}
-                  >
+                  <button className="account-button login-btn" onClick={handleLogin}>
                     Đăng nhập
                   </button>
                   <button
