@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>9-Ball Pool Game</title>
+    <style>
+        canvas {
+            border: 2px solid #333;
+            background: #2e8b57;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+        }
+        #gameInfo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #pocketedBalls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameInfo">
+        <p>Current Target: <span id="targetBall">1</span></p>
+        <p>Score: <span id="score">0</span></p>
+        <p id="gameStatus">Game in Progress</p>
+    </div>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="pocketedBalls"></div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const pocketedBallsDiv = document.getElementById('pocketedBalls');
+
+        // Constants
+        const BALL_RADIUS = 15;
+        const POCKET_RADIUS = 20;
+        const FRICTION = 0.98;
+        const SPIN_FRICTION = 0.99;
+        const CUE_LENGTH = 100;
+
+        // Ball class
+        class Ball {
+            constructor(x, y, number, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.spinX = 0; // Spin along x-axis
+                this.spinY = 0; // Spin along y-axis
+                this.number = number;
+                this.color = color;
+                this.inPlay = true;
+            }
+
+            draw() {
+                if (!this.inPlay) return;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, BALL_RADIUS, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+
+                // Draw number
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.number, this.x, this.y + 4);
+            }
+
+            update() {
+                if (!this.inPlay) return;
+
+                // Apply spin effect to trajectory
+                this.vx += this.spinY * 0.02; // Reduced spin effect
+                this.vy -= this.spinX * 0.02;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Friction
+                this.vx *= FRICTION;
+                this.vy *= FRICTION;
+                this.spinX *= SPIN_FRICTION;
+                this.spinY *= SPIN_FRICTION;
+
+                // Wall collision
+                if (this.x < BALL_RADIUS) {
+                    this.x = BALL_RADIUS;
+                    this.vx = -this.vx;
+                    this.spinY = -this.spinY;
+                }
+                if (this.x > canvas.width - BALL_RADIUS) {
+                    this.x = canvas.width - BALL_RADIUS;
+                    this.vx = -this.vx;
+                    this.spinY = -this.spinY;
+                }
+                if (this.y < BALL_RADIUS) {
+                    this.y = BALL_RADIUS;
+                    this.vy = -this.vy;
+                    this.spinX = -this.spinX;
+                }
+                if (this.y > canvas.height - BALL_RADIUS) {
+                    this.y = canvas.height - BALL_RADIUS;
+                    this.vy = -this.vy;
+                    this.spinX = -this.spinX;
+                }
+            }
+        }
+
+        // Game variables
+        let balls = [];
+        let pockets = [];
+        let pocketedBalls = [];
+        let score = 0;
+        let gameOver = false;
+        let currentTarget = 1;
+        let firstHitBall = null;
+        const colors = [
+            'white',    // Cue ball
+            '#FFD700',  // 1
+            '#0000FF',  // 2
+            '#FF0000',  // 3
+            '#800080',  // 4
+            '#FFA500',  // 5
+            '#008000',  // 6
+            '#800000',  // 7
+            '#000000',  // 8
+            '#FFFF00'   // 9
+        ];
+
+        // Initialize balls
+        function initBalls() {
+            // Cue ball (white)
+            balls.push(new Ball(200, 200, 0, colors[0]));
+
+            // Other balls based on the image positions
+            balls.push(new Ball(650, 180, 1, colors[1])); // Ball 1 (yellow)
+            balls.push(new Ball(650, 150, 2, colors[2])); // Ball 2 (blue)
+            balls.push(new Ball(680, 180, 3, colors[3])); // Ball 3 (red)
+            balls.push(new Ball(680, 150, 7, colors[7])); // Ball 7 (maroon)
+            balls.push(new Ball(710, 180, 6, colors[6])); // Ball 6 (green)
+            balls.push(new Ball(710, 150, 8, colors[8])); // Ball 8 (black)
+            balls.push(new Ball(710, 120, 9, colors[9])); // Ball 9 (yellow)
+        }
+
+        // Initialize pockets
+        function initPockets() {
+            pockets = [
+                { x: 0, y: 0 },                    // Top-left
+                { x: canvas.width, y: 0 },         // Top-right
+                { x: 0, y: canvas.height },        // Bottom-left
+                { x: canvas.width, y: canvas.height }, // Bottom-right
+                { x: canvas.width / 2, y: 0 },     // Top-middle
+                { x: canvas.width / 2, y: canvas.height } // Bottom-middle
+            ];
+        }
+
+        // Draw pockets
+        function drawPockets() {
+            pockets.forEach(pocket => {
+                ctx.beginPath();
+                ctx.arc(pocket.x, pocket.y, POCKET_RADIUS, 0, Math.PI * 2);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+                ctx.closePath();
+            });
+        }
+
+        // Display pocketed balls
+        function displayPocketedBalls() {
+            pocketedBallsDiv.innerHTML = '';
+            pocketedBalls.forEach(ball => {
+                const ballDiv = document.createElement('div');
+                ballDiv.style.width = `${BALL_RADIUS * 2}px`;
+                ballDiv.style.height = `${BALL_RADIUS * 2}px`;
+                ballDiv.style.borderRadius = '50%';
+                ballDiv.style.backgroundColor = ball.color;
+                ballDiv.style.display = 'flex';
+                ballDiv.style.alignItems = 'center';
+                ballDiv.style.justifyContent = 'center';
+                ballDiv.style.color = 'white';
+                ballDiv.style.fontFamily = 'Arial';
+                ballDiv.style.fontSize = '12px';
+                ballDiv.textContent = ball.number;
+                pocketedBallsDiv.appendChild(ballDiv);
+            });
+        }
+
+        // Check if a ball falls into a pocket
+        function checkPockets() {
+            balls.forEach(ball => {
+                if (!ball.inPlay) return;
+                pockets.forEach(pocket => {
+                    let dx = ball.x - pocket.x;
+                    let dy = ball.y - pocket.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < POCKET_RADIUS + BALL_RADIUS) {
+                        ball.inPlay = false;
+                        if (ball.number === 0) {
+                            // Cue ball falls into pocket (foul)
+                            gameOver = true;
+                            document.getElementById('gameStatus').textContent = 'Game Over: Cue Ball Pocketed!';
+                        } else {
+                            // Other balls
+                            pocketedBalls.push(ball);
+                            displayPocketedBalls();
+                            score += ball.number;
+                            document.getElementById('score').textContent = score;
+                            if (ball.number === 9) {
+                                gameOver = true;
+                                document.getElementById('gameStatus').textContent = 'You Win!';
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Improved collision detection and response
+        function checkCollisions() {
+            firstHitBall = null;
+            let collisionsHandled = new Set();
+
+            // Repeat collision handling to ensure all collisions are resolved
+            for (let iteration = 0; iteration < 3; iteration++) {
+                let collisions = [];
+
+                // Collect all potential collisions
+                for (let i = 0; i < balls.length; i++) {
+                    for (let j = i + 1; j < balls.length; j++) {
+                        if (!balls[i].inPlay || !balls[j].inPlay) continue;
+                        let pairKey = `${Math.min(i, j)}-${Math.max(i, j)}`;
+                        if (collisionsHandled.has(pairKey)) continue;
+
+                        let dx = balls[j].x - balls[i].x;
+                        let dy = balls[j].y - balls[i].y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < BALL_RADIUS * 2) {
+                            collisions.push({ ball1: balls[i], ball2: balls[j], distance, dx, dy, pairKey });
+                        }
+                    }
+                }
+
+                // Process each collision
+                collisions.forEach(({ ball1, ball2, distance, dx, dy, pairKey }) => {
+                    collisionsHandled.add(pairKey);
+
+                    // Check if this is the first ball hit by the cue ball
+                    if (ball1.number === 0 && !firstHitBall) {
+                        firstHitBall = ball2;
+                    } else if (ball2.number === 0 && !firstHitBall) {
+                        firstHitBall = ball1;
+                    }
+
+                    // Normalize the distance vector (collision normal)
+                    let nx = dx / distance || 0;
+                    let ny = dy / distance || 0;
+
+                    // Calculate relative velocity
+                    let dvx = ball2.vx - ball1.vx;
+                    let dvy = ball2.vy - ball1.vy;
+
+                    // Calculate the dot product of the relative velocity and the normal
+                    let dot = dvx * nx + dvy * ny;
+
+                    // Only resolve collision if balls are moving towards each other
+                    if (dot < 0) {
+                        // Elastic collision: calculate new velocities
+                        let v1n = ball1.vx * nx + ball1.vy * ny; // Normal component of ball1
+                        let v2n = ball2.vx * nx + ball2.vy * ny; // Normal component of ball2
+                        let v1t = ball1.vx * -ny + ball1.vy * nx; // Tangential component of ball1
+                        let v2t = ball2.vx * -ny + ball2.vy * nx; // Tangential component of ball2
+
+                        // After collision, normal components swap (elastic collision)
+                        let v1nAfter = v2n;
+                        let v2nAfter = v1n;
+
+                        // Convert back to x, y components
+                        ball1.vx = v1nAfter * nx + v1t * -ny;
+                        ball1.vy = v1nAfter * ny + v1t * nx;
+                        ball2.vx = v2nAfter * nx + v2t * -ny;
+                        ball2.vy = v2nAfter * ny + v2t * nx;
+
+                        // Apply spin effect on collision (reduced effect)
+                        let spinTransfer = 0.1;
+                        let spinX1 = ball1.spinX + (ball2.spinX - ball1.spinX) * spinTransfer;
+                        let spinY1 = ball1.spinY + (ball2.spinY - ball1.spinY) * spinTransfer;
+                        let spinX2 = ball2.spinX + (ball1.spinX - ball2.spinX) * spinTransfer;
+                        let spinY2 = ball2.spinY + (ball1.spinY - ball2.spinY) * spinTransfer;
+
+                        ball1.spinX = spinX1;
+                        ball1.spinY = spinY1;
+                        ball2.spinX = spinX2;
+                        ball2.spinY = spinY2;
+
+                        // Prevent balls from sticking by correcting their positions
+                        let overlap = BALL_RADIUS * 2 - distance;
+                        let correction = overlap / 2 + 0.2; // Increased buffer for better separation
+                        ball1.x -= correction * nx;
+                        ball1.y -= correction * ny;
+                        ball2.x += correction * nx;
+                        ball2.y += correction * ny;
+
+                        // Ensure velocities are sufficient to separate balls
+                        let speed1 = Math.sqrt(ball1.vx * ball1.vx + ball1.vy * ball1.vy);
+                        let speed2 = Math.sqrt(ball2.vx * ball2.vx + ball2.vy * ball2.vy);
+                        if (speed1 < 0.1) {
+                            ball1.vx = 0;
+                            ball1.vy = 0;
+                        }
+                        if (speed2 < 0.1) {
+                            ball2.vx = 0;
+                            ball2.vy = 0;
+                        }
+                    }
+                });
+
+                // If no collisions in this iteration, break early
+                if (collisions.length === 0) break;
+            }
+
+            // Check if the first ball hit is the correct target
+            if (firstHitBall && firstHitBall.number !== currentTarget) {
+                gameOver = true;
+                document.getElementById('gameStatus').textContent = 'Game Over: Wrong Ball Hit!';
+            }
+        }
+
+        // Update current target
+        function updateTarget() {
+            let nextTarget = currentTarget + 1;
+            while (nextTarget <= 9) {
+                let found = balls.find(ball => ball.number === nextTarget && ball.inPlay);
+                if (found) {
+                    currentTarget = nextTarget;
+                    break;
+                }
+                nextTarget++;
+            }
+            document.getElementById('targetBall').textContent = currentTarget;
+        }
+
+        // Mouse controls
+        let isDragging = false;
+        let startX, startY;
+        let endX, endY;
+        let allBallsStopped = true;
+        let clickOffsetX, clickOffsetY;
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (gameOver || !allBallsStopped) return;
+            let dx = e.offsetX - balls[0].x;
+            let dy = e.offsetY - balls[0].y;
+            if (Math.hypot(dx, dy) < BALL_RADIUS) {
+                isDragging = true;
+                startX = e.offsetX;
+                startY = e.offsetY;
+                clickOffsetX = dx; // Offset from center of cue ball
+                clickOffsetY = dy;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                endX = e.offsetX;
+                endY = e.offsetY;
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (isDragging) {
+                isDragging = false;
+                let power = 0.1;
+                balls[0].vx = (startX - e.offsetX) * power;
+                balls[0].vy = (startY - e.offsetY) * power;
+
+                // Apply spin based on where the cue ball was clicked
+                let spinPower = 0.1;
+                balls[0].spinX = clickOffsetY * spinPower; // Top/back spin
+                balls[0].spinY = -clickOffsetX * spinPower; // Side spin
+            }
+        });
+
+        // Draw cue stick and aiming line
+        function drawCue() {
+            if (!isDragging || gameOver || !allBallsStopped) return;
+
+            // Draw aiming line
+            ctx.beginPath();
+            ctx.moveTo(balls[0].x, balls[0].y);
+            let dx = endX - startX;
+            let dy = endY - startY;
+            let length = Math.sqrt(dx * dx + dy * dy);
+            let nx = dx / length;
+            let ny = dy / length;
+            ctx.lineTo(balls[0].x + nx * 200, balls[0].y + ny * 200);
+            ctx.strokeStyle = 'white';
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw cue stick
+            ctx.beginPath();
+            ctx.moveTo(balls[0].x - nx * BALL_RADIUS, balls[0].y - ny * BALL_RADIUS);
+            ctx.lineTo(balls[0].x - nx * (BALL_RADIUS + CUE_LENGTH), balls[0].y - ny * (BALL_RADIUS + CUE_LENGTH));
+            ctx.strokeStyle = 'brown';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.lineWidth = 1;
+
+            // Draw spin indicator (where the cue hits the ball)
+            ctx.beginPath();
+            ctx.arc(balls[0].x + clickOffsetX, balls[0].y + clickOffsetY, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // Check if all balls have stopped
+        function checkBallsStopped() {
+            allBallsStopped = balls.every(ball => {
+                if (!ball.inPlay) return true;
+                return Math.abs(ball.vx) < 0.01 && Math.abs(ball.vy) < 0.01;
+            });
+            if (allBallsStopped) {
+                updateTarget();
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawPockets();
+            balls.forEach(ball => {
+                ball.update();
+                ball.draw();
+            });
+
+            checkCollisions();
+            checkPockets();
+            checkBallsStopped();
+            drawCue();
+
+            if (!gameOver) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
+        // Start game
+        initBalls();
+        initPockets();
+        gameLoop();
+    </script>
+</body>
+</html>

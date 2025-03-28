@@ -10,27 +10,28 @@ const MESSAGES = {
   LOGIN_REQUIRED: "Vui lòng đăng nhập để tiếp tục!",
 };
 
+// Component hiển thị từng sản phẩm trong giỏ hàng
 const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
   const isDecreaseDisabled = item.quantity === 1;
 
   return (
     <li className="cart-item">
       <img src={item.image} alt={item.name} className="cart-image" />
-      <p className="cart-name">{item.name}</p>
-      <p className="cart-price">💰 {item.price.toLocaleString("vi-VN")} VNĐ</p>
-
-      <div className="quantity-controls">
-        <button
-          onClick={() => onDecrease(item.id)}
-          disabled={isDecreaseDisabled}
-          className={isDecreaseDisabled ? "disabled" : ""}
-        >
-          -
-        </button>
-        <span>{item.quantity}</span>
-        <button onClick={() => onIncrease(item.id)}>+</button>
+      <div className="cart-item-details">
+        <p className="cart-name">{item.name}</p>
+        <p className="cart-price">💰 {item.price.toLocaleString("vi-VN")} VNĐ</p>
+        <div className="quantity-controls">
+          <button
+            onClick={() => onDecrease(item.id)}
+            disabled={isDecreaseDisabled}
+            className={isDecreaseDisabled ? "disabled" : ""}
+          >
+            -
+          </button>
+          <span>{item.quantity}</span>
+          <button onClick={() => onIncrease(item.id)}>+</button>
+        </div>
       </div>
-
       <button className="remove-button" onClick={() => onRemove(item.id)}>
         Xóa
       </button>
@@ -38,23 +39,29 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
   );
 };
 
-const CartPage = () => {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } =
-    useContext(CartContext);
-  const authContext = useContext(AuthContext);
-  const { isLoggedIn } = authContext || { isLoggedIn: false };
-  const navigate = useNavigate();
+// Component hiển thị tổng tiền và nút thanh toán
+const CartSummary = ({ totalPrice, onCheckout }) => (
+  <div className="cart-summary">
+    <h3 className="total-price">
+      Tổng tiền: {totalPrice.toLocaleString("vi-VN")} VNĐ
+    </h3>
+    <button className="checkout-button" onClick={onCheckout}>
+      🛍 Mua hàng
+    </button>
+  </div>
+);
 
-  const totalPrice = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+const CartPage = () => {
+  const navigate = useNavigate();
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = useContext(CartContext);
+  const { isLoggedIn } = useContext(AuthContext) || { isLoggedIn: false };
+
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = () => {
     if (!isLoggedIn) {
       alert(MESSAGES.LOGIN_REQUIRED);
-      navigate("/");
-      return;
+      return navigate("/");
     }
 
     alert(MESSAGES.CHECKOUT_SUCCESS);
@@ -67,7 +74,7 @@ const CartPage = () => {
       <h2>🛍 Giỏ Hàng</h2>
 
       {cart.length === 0 ? (
-        <p className="empty-cart-message">{MESSAGES.EMPTY_CART}</p>
+        <EmptyCart />
       ) : (
         <>
           <ul className="cart-list">
@@ -81,24 +88,20 @@ const CartPage = () => {
               />
             ))}
           </ul>
-
-          <h3 className="total-price">
-            Tổng tiền: {totalPrice.toLocaleString("vi-VN")} VNĐ
-          </h3>
-
-          <button className="checkout-button" onClick={handleCheckout}>
-            🛍 Mua hàng
-          </button>
+          <CartSummary totalPrice={totalPrice} onCheckout={handleCheckout} />
         </>
       )}
 
-      <div className="back-button-container">
-        <Link to="/home" className="back-button">
-          ⬅ Quay lại cửa hàng
-        </Link>
-      </div>
+      <Link to="/home" className="back-button">
+        ⬅ Quay lại cửa hàng
+      </Link>
     </div>
   );
 };
+
+// Component hiển thị khi giỏ hàng trống
+const EmptyCart = () => (
+  <p className="empty-cart-message">{MESSAGES.EMPTY_CART}</p>
+);
 
 export default CartPage;
