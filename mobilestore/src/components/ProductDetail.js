@@ -1,9 +1,11 @@
+// components/ProductDetail.jsx
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { CartContext } from "../pages/CartContext";
 import { AuthContext } from "../account/AuthContext";
 import "./ProductDetail.css";
 
+// Constants
 const API_URL = `${process.env.PUBLIC_URL}/db.json`;
 const SUCCESS_MESSAGE_TIMEOUT = 2000;
 const MESSAGES = {
@@ -15,6 +17,7 @@ const MESSAGES = {
   LOGIN_REQUIRED: "Vui lòng đăng nhập để tiếp tục!",
 };
 
+// Component ProductDetail
 const ProductDetail = () => {
   const { id } = useParams();
   const { addToCart, cart } = useContext(CartContext);
@@ -30,6 +33,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setLoading(true);
         const response = await fetch(API_URL);
         if (!response.ok) {
           throw new Error(MESSAGES.ERROR_FETCH);
@@ -85,22 +89,13 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail">
-      <header className="header">
-        <Link to="/home" className="store-title">
-          📱 MobileStore
-        </Link>
-        <Link to="/cart" className="cart-button">
-          🛍 Giỏ hàng ({cart.length})
-        </Link>
-      </header>
-
       <section className="product-content">
         <h2>{product.name}</h2>
         <img src={product.image} alt={product.name} className="product-image" />
         <p className="price">
           💰 {product.price.toLocaleString("vi-VN")} VNĐ
-        </p>
-        <p className="description">{product.description}</p>
+        </p> {/* Đóng thẻ p của price */}
+        <p className="description">{product.description}</p> {/* Thẻ p riêng cho description */}
 
         <div className="specs">
           <h3>⚙️ Thông số kỹ thuật</h3>
