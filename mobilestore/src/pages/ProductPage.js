@@ -1,45 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "./ProductPage.css";
 
+// Constants
 const API_URL = `${process.env.PUBLIC_URL}/db.json`;
-const MESSAGES = {
-  LOADING: "⏳ Đang tải...",
-  ERROR: "❌ Không thể tải sản phẩm!",
-};
 const PRODUCTS_PER_PAGE = 8;
 const BRANDS = ["Tất cả", "Xiaomi", "Apple", "Samsung"];
 
-const fetchProducts = async () => {
-  const response = await fetch(API_URL);
-  if (!response.ok) throw new Error(MESSAGES.ERROR);
+// Utility Functions
+const fetchProducts = async (signal) => {
+  const response = await fetch(API_URL, { signal });
+  if (!response.ok) throw new Error("Không thể tải sản phẩm!");
   const data = await response.json();
   return Array.isArray(data) ? data : data.products || [];
 };
 
-const ProductCard = ({ id, name, image, price }) => (
-  <Link to={`/products/${id}`} className="product-card-link">
+// Sub-components
+const ProductCard = ({ product }) => (
+  <Link to={`/products/${product.id}`} className="product-card-link" aria-label={`Xem chi tiết ${product.name}`}>
     <div className="product-card">
-      <img src={image} alt={name} className="product-image" />
-      <h3>{name}</h3>
-      <p className="price">💰 Giá: {price.toLocaleString("vi-VN")} VNĐ</p>
+      <img 
+        src={product.image} 
+        alt={product.name} 
+        className="product-image" 
+        loading="lazy"
+      />
+      <h3>{product.name}</h3>
+      <p className="price">💰 {product.price.toLocaleString("vi-VN")} VNĐ</p>
     </div>
   </Link>
 );
 
-const Pagination = ({ currentPage, totalPages, onPrevious, onNext }) => (
+const Pagination = ({ currentPage, totalPages, onPageChange }) => (
   <div className="pagination">
     <button
       className="pagination-button"
-      onClick={onPrevious}
+      onClick={() => onPageChange(currentPage - 1)}
       disabled={currentPage === 1}
     >
       Trang trước
     </button>
-    <span className="pagination-current">Trang {currentPage}</span>
+    <span className="pagination-current">
+      Trang {currentPage}/{totalPages}
+    </span>
     <button
       className="pagination-button"
-      onClick={onNext}
+      onClick={() => onPageChange(currentPage + 1)}
       disabled={currentPage === totalPages}
     >
       Trang sau
@@ -47,108 +53,142 @@ const Pagination = ({ currentPage, totalPages, onPrevious, onNext }) => (
   </div>
 );
 
+const BrandFilter = ({ brands, selectedBrand, onBrandSelect }) => (
+  <div className="brand-buttons">
+    {brands.map((brand) => (
+      <button
+        key={brand}
+        className={`brand-button ${selectedBrand === brand ? "active" : ""}`}
+        onClick={() => onBrandSelect(brand)}
+      >
+        {brand}
+      </button>
+    ))}
+  </div>
+);
+
+// Main Component
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [status, setStatus] = useState({ loading: true, error: null });
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedBrand, setSelectedBrand] = useState("Tất cả");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    brand: "Tất cả",
+    search: ""
+  });
 
+  // Fetch products
   useEffect(() => {
+    const controller = new AbortController();
+    
     const loadProducts = async () => {
       try {
-        const productList = await fetchProducts();
+        const productList = await fetchProducts(controller.signal);
         setProducts(productList);
-        setFilteredProducts(productList);
+        setStatus({ loading: false, error: null });
       } catch (err) {
-        console.error("Fetch error:", err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
+        if (err.name !== "AbortError") {
+          setStatus({ loading: false, error: err.message });
+        }
       }
     };
+    
     loadProducts();
+    return () => controller.abort();
   }, []);
 
+  // Filter products
   useEffect(() => {
-    const filterProducts = () => {
-      let filtered = [...products];
-      if (selectedBrand !== "Tất cả") {
-        filtered = filtered.filter((product) => product.brand === selectedBrand);
-      }
-      if (searchQuery.trim()) {
-        filtered = filtered.filter((product) =>
-          product.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
-      setFilteredProducts(filtered);
-      setCurrentPage(1);
-    };
-    filterProducts();
-  }, [selectedBrand, searchQuery, products]);
+    let filtered = [...products];
+    
+    if (filters.brand !== "Tất cả") {
+      filtered = filtered.filter(product => product.brand === filters.brand);
+    }
+    
+    if (filters.search.trim()) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+    
+    setFilteredProducts(filtered);
+    setCurrentPage(1);
+  }, [filters, products]);
 
+  // Calculate pagination
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const currentProducts = filteredProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  const currentProducts = filteredProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  );
 
-  const handlePreviousPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const handleBrandFilter = (brand) => setSelectedBrand(brand);
-  const handleSearchChange = (e) => setSearchQuery(e.target.value);
+  // Handlers
+  const handlePageChange = useCallback((page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  }, [totalPages]);
 
-  if (isLoading) return <p className="loading">{MESSAGES.LOADING}</p>;
-  if (error) return <p className="error">{error}</p>;
+  const handleBrandSelect = useCallback((brand) => {
+    setFilters(prev => ({ ...prev, brand }));
+  }, []);
+
+  const handleSearchChange = useCallback((e) => {
+    setFilters(prev => ({ ...prev, search: e.target.value }));
+  }, []);
+
+  // Render states
+  if (status.loading) return <p className="status loading">⏳ Đang tải...</p>;
+  if (status.error) return <p className="status error">❌ {status.error}</p>;
 
   return (
-    <div className="product-page">
-      <h2>Danh sách sản phẩm</h2>
+    <main className="product-page">
+      <h1 className="page-title">Danh sách sản phẩm</h1>
+      
       <div className="filter-section">
         <input
           type="text"
           className="search-input"
           placeholder="Tìm kiếm sản phẩm..."
-          value={searchQuery}
+          value={filters.search}
           onChange={handleSearchChange}
         />
-        <div className="brand-buttons">
-          {BRANDS.map((brand) => (
-            <button
-              key={brand}
-              className={`brand-button ${selectedBrand === brand ? "active" : ""}`}
-              onClick={() => handleBrandFilter(brand)}
-            >
-              {brand}
-            </button>
-          ))}
-        </div>
+        
+        <BrandFilter 
+          brands={BRANDS} 
+          selectedBrand={filters.brand} 
+          onBrandSelect={handleBrandSelect} 
+        />
       </div>
+      
       <div className="product-list">
         {currentProducts.length > 0 ? (
-          currentProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              image={product.image}
-              price={product.price}
-            />
+          currentProducts.map(product => (
+            <ProductCard key={product.id} product={product} />
           ))
         ) : (
           <p className="no-products">Không có sản phẩm nào phù hợp.</p>
         )}
       </div>
+      
       {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPrevious={handlePreviousPage}
-          onNext={handleNextPage}
+          onPageChange={handlePageChange}
         />
       )}
-    </div>
+    </main>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    brand: PropTypes.string,
+  }).isRequired,
 };
 
 export default ProductPage;
