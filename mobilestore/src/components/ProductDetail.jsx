@@ -4,6 +4,7 @@ import { CartContext } from "../pages/CartContext";
 import { AuthContext } from "../account/AuthContext";
 import "./ProductDetail.css";
 
+// Constants
 const API_URL = `${process.env.PUBLIC_URL}/db.json`;
 const MESSAGES = {
   LOADING: "⏳ Đang tải...",
@@ -13,38 +14,39 @@ const MESSAGES = {
   LOGIN_REQUIRED: "Vui lòng đăng nhập để tiếp tục!",
 };
 
+// Component chính
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const { isLoggedIn = false } = useContext(AuthContext) || {};
-  
+
+  // State
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Fetch dữ liệu sản phẩm
   useEffect(() => {
     const controller = new AbortController();
-    
+
     const fetchProduct = async () => {
       try {
-        setLoading(true);
+        setIsLoading(true);
         const response = await fetch(API_URL, { signal: controller.signal });
-        
         if (!response.ok) throw new Error(MESSAGES.ERROR_FETCH);
-        
+
         const data = await response.json();
-        const foundProduct = data.products?.find(p => p.id === parseInt(id));
-        
+        const foundProduct = data.products?.find(p => p.id === Number(id));
         if (!foundProduct) throw new Error(MESSAGES.ERROR_NOT_FOUND);
-        
+
         setProduct(foundProduct);
         setError(null);
       } catch (err) {
         if (err.name !== "AbortError") setError(err.message);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -52,6 +54,7 @@ const ProductDetail = () => {
     return () => controller.abort();
   }, [id]);
 
+  // Xử lý thêm vào giỏ hàng
   const handleAddToCart = useCallback(() => {
     if (!isLoggedIn) {
       setSuccessMessage(MESSAGES.LOGIN_REQUIRED);
@@ -60,10 +63,10 @@ const ProductDetail = () => {
     }
 
     if (!product) return;
-    
+
     addToCart(product);
     setSuccessMessage(MESSAGES.SUCCESS_ADD_TO_CART);
-    
+
     const timer = setTimeout(() => {
       setSuccessMessage("");
       navigate("/home");
@@ -72,25 +75,27 @@ const ProductDetail = () => {
     return () => clearTimeout(timer);
   }, [product, addToCart, isLoggedIn, navigate]);
 
-  if (loading) return <p className="loading">{MESSAGES.LOADING}</p>;
+  // Render trạng thái
+  if (isLoading) return <p className="loading">{MESSAGES.LOADING}</p>;
   if (error) return <p className="error">❌ {error}</p>;
   if (!product) return <p className="warning">⚠ Không có dữ liệu sản phẩm</p>;
 
+  // Render chi tiết sản phẩm
   return (
     <div className="product-detail">
       <section className="product-content">
         <h2>{product.name}</h2>
-        <img 
-          src={product.image} 
-          alt={product.name} 
-          className="product-image" 
+        <img
+          src={product.image}
+          alt={product.name}
+          className="product-image"
           loading="lazy"
         />
-        
         <div className="price-section">
-          <p className="price">💰 {product.price.toLocaleString("vi-VN")} VNĐ</p>
+          <p className="price">
+            💰 {product.price.toLocaleString("vi-VN")} VNĐ
+          </p>
         </div>
-        
         <p className="description">{product.description}</p>
 
         <div className="specs">
@@ -111,8 +116,8 @@ const ProductDetail = () => {
       </section>
 
       <div className="button-group">
-        <button 
-          className="add-to-cart" 
+        <button
+          className="add-to-cart"
           onClick={handleAddToCart}
           disabled={!product}
         >

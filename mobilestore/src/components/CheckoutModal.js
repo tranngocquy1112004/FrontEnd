@@ -1,85 +1,44 @@
-// components/CheckoutModal.jsx
 import React, { useState } from "react";
 import "./CheckoutModal.css";
 
-/**
- * Component CheckoutModal - Hiển thị modal xác nhận thanh toán và thông tin giao hàng
- * 
- * @param {Object} props - Props của component
- * @param {Array} props.cart - Mảng các sản phẩm trong giỏ hàng
- * @param {number} props.totalPrice - Tổng giá trị đơn hàng
- * @param {Function} props.onConfirm - Callback khi xác nhận thanh toán
- * @param {Function} props.onCancel - Callback khi hủy thanh toán
- * @returns {JSX.Element} - Modal thanh toán
- */
+// Component CheckoutModal
 const CheckoutModal = ({ cart, totalPrice, onConfirm, onCancel }) => {
-  // State lưu thông tin giao hàng
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
     address: "",
     phone: "",
   });
-  
-  // State hiển thị lỗi validate
   const [validationErrors, setValidationErrors] = useState({});
 
-  /**
-   * Xử lý thay đổi giá trị trong form
-   * @param {Event} e - Event từ input field
-   */
+  // Xử lý thay đổi input
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Cập nhật state
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
-    
-    // Xóa thông báo lỗi khi người dùng bắt đầu nhập
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  /**
-   * Kiểm tra tính hợp lệ của form
-   * @returns {boolean} - True nếu form hợp lệ, false nếu không
-   */
+  // Kiểm tra tính hợp lệ của form
   const validateForm = () => {
     const errors = {};
-    let isValid = true;
+    const { name, address, phone } = shippingInfo;
 
-    // Kiểm tra tên
-    if (!shippingInfo.name.trim()) {
-      errors.name = "Vui lòng nhập họ và tên";
-      isValid = false;
-    }
-
-    // Kiểm tra địa chỉ
-    if (!shippingInfo.address.trim()) {
-      errors.address = "Vui lòng nhập địa chỉ giao hàng";
-      isValid = false;
-    }
-
-    // Kiểm tra số điện thoại
-    if (!shippingInfo.phone.trim()) {
+    if (!name.trim()) errors.name = "Vui lòng nhập họ và tên";
+    if (!address.trim()) errors.address = "Vui lòng nhập địa chỉ giao hàng";
+    if (!phone.trim()) {
       errors.phone = "Vui lòng nhập số điện thoại";
-      isValid = false;
-    } else if (!/^(0|\+84)[3|5|7|8|9][0-9]{8}$/.test(shippingInfo.phone)) {
+    } else if (!/^(0|\+84)[3|5|7|8|9][0-9]{8}$/.test(phone)) {
       errors.phone = "Số điện thoại không hợp lệ";
-      isValid = false;
     }
 
     setValidationErrors(errors);
-    return isValid;
+    return Object.keys(errors).length === 0;
   };
 
-  /**
-   * Xử lý khi người dùng xác nhận đơn hàng
-   * @param {Event} e - Form submit event
-   */
+  // Xử lý xác nhận đơn hàng
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Kiểm tra form trước khi submit
     if (validateForm()) {
       onConfirm(shippingInfo);
     }
@@ -89,7 +48,7 @@ const CheckoutModal = ({ cart, totalPrice, onConfirm, onCancel }) => {
     <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2 className="modal-title">🛒 Xác nhận thanh toán</h2>
-        
+
         <div className="order-summary">
           <h3>📋 Thông tin đơn hàng</h3>
           {cart.length > 0 ? (
@@ -113,10 +72,10 @@ const CheckoutModal = ({ cart, totalPrice, onConfirm, onCancel }) => {
             <p className="empty-cart-message">Không có sản phẩm trong giỏ hàng</p>
           )}
         </div>
-        
+
         <form onSubmit={handleSubmit} className="shipping-form">
           <h3>🚚 Thông tin giao hàng</h3>
-          
+
           <div className="form-group">
             <label htmlFor="name">Họ và tên:</label>
             <input
@@ -132,7 +91,7 @@ const CheckoutModal = ({ cart, totalPrice, onConfirm, onCancel }) => {
               <span className="error-message">{validationErrors.name}</span>
             )}
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="address">Địa chỉ:</label>
             <input
@@ -148,7 +107,7 @@ const CheckoutModal = ({ cart, totalPrice, onConfirm, onCancel }) => {
               <span className="error-message">{validationErrors.address}</span>
             )}
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="phone">Số điện thoại:</label>
             <input
@@ -164,12 +123,16 @@ const CheckoutModal = ({ cart, totalPrice, onConfirm, onCancel }) => {
               <span className="error-message">{validationErrors.phone}</span>
             )}
           </div>
-          
+
           <div className="modal-buttons">
             <button type="submit" className="confirm-button">
               ✅ Xác nhận đặt hàng
             </button>
-            <button type="button" className="cancel-button" onClick={onCancel}>
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={onCancel}
+            >
               ❌ Hủy
             </button>
           </div>
