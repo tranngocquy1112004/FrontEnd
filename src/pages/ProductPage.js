@@ -3,21 +3,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
 import "./ProductPage.css";
 
-// Constants
-const PRODUCTS_PER_PAGE = 8;
-const API_URL = "http://localhost:4000/products";
+// Các hằng số
+const PRODUCTS_PER_PAGE = 8; // Số sản phẩm hiển thị trên mỗi trang
+const API_URL = "http://localhost:4000/products"; // URL API để lấy dữ liệu sản phẩm
 
 const ProductPage = () => {
-  const { addToCart } = useContext(CartContext);
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("all"); // Thêm trạng thái cho thương hiệu
-  const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext); // Lấy hàm thêm vào giỏ hàng từ context
+  const [products, setProducts] = useState([]); // Danh sách tất cả sản phẩm
+  const [filteredProducts, setFilteredProducts] = useState([]); // Danh sách sản phẩm đã lọc
+  const [currentUser, setCurrentUser] = useState(null); // Thông tin người dùng hiện tại
+  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+  const [searchTerm, setSearchTerm] = useState(""); // Từ khóa tìm kiếm
+  const [selectedBrand, setSelectedBrand] = useState("all"); // Thương hiệu đã chọn
+  const navigate = useNavigate(); // Hook để điều hướng
 
-  // Fetch products and user on mount
+  // Lấy dữ liệu sản phẩm và thông tin người dùng khi component được mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -26,7 +26,7 @@ const ProductPage = () => {
         setProducts(data);
         setFilteredProducts(data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
       }
     };
 
@@ -41,7 +41,7 @@ const ProductPage = () => {
     loadUser();
   }, []);
 
-  // Handle search and brand filter
+  // Xử lý tìm kiếm và lọc theo thương hiệu
   useEffect(() => {
     let filtered = products;
 
@@ -59,14 +59,14 @@ const ProductPage = () => {
     setCurrentPage(1); // Reset về trang 1 khi lọc
   }, [searchTerm, selectedBrand, products]);
 
-  // Handle logout
+  // Xử lý đăng xuất
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
     setCurrentUser(null);
     navigate("/");
   };
 
-  // Pagination logic
+  // Logic phân trang
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const indexOfLastProduct = currentPage * PRODUCTS_PER_PAGE;
   const indexOfFirstProduct = indexOfLastProduct - PRODUCTS_PER_PAGE;
@@ -84,7 +84,7 @@ const ProductPage = () => {
     }
   };
 
-  // Render sakura falling animation
+  // Hiển thị hiệu ứng hoa anh đào rơi
   const renderSakuraSpans = () => {
     return Array.from({ length: 30 }, (_, index) => <span key={index} />);
   };
@@ -131,7 +131,7 @@ const ProductPage = () => {
           </div>
         </div>
 
-        {/* Thêm các nút lọc thương hiệu */}
+        {/* Các nút lọc thương hiệu */}
         <div className="brand-filter">
           <button
             className={`brand-button ${selectedBrand === "all" ? "active" : ""}`}

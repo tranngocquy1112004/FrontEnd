@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]); // Danh sách sản phẩm
+  const [loading, setLoading] = useState(true); // Trạng thái đang tải
+  const [error, setError] = useState(null); // Thông báo lỗi
 
   useEffect(() => {
     fetch("/db.json")

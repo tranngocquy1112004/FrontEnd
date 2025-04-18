@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
 import "./CartPage.css";
 
-// Component: CartItem
+// Component: CartItem - Hiển thị thông tin một sản phẩm trong giỏ hàng
 const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
-  const isDecreaseDisabled = item.quantity === 1;
+  const isDecreaseDisabled = item.quantity === 1; // Kiểm tra nếu số lượng sản phẩm là 1 thì không thể giảm
 
   return (
     <li className="cart-item">
@@ -34,20 +34,20 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
 
 const CartPage = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } =
-    useContext(CartContext);
-  const navigate = useNavigate();
+    useContext(CartContext); // Lấy các hàm xử lý giỏ hàng từ context
+  const navigate = useNavigate(); // Hook để điều hướng
 
-  // Calculate total price
+  // Tính tổng giá trị giỏ hàng
   const totalPrice = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
 
-  // Handle checkout
+  // Xử lý thanh toán
   const handleCheckout = () => {
     alert("Đặt hàng thành công!");
-    clearCart();
-    navigate("/home");
+    clearCart(); // Xóa giỏ hàng sau khi đặt hàng
+    navigate("/home"); // Chuyển hướng về trang chủ
   };
 
   return (

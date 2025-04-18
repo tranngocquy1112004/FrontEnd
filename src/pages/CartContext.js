@@ -1,13 +1,13 @@
 import React, { createContext, useState, useCallback } from "react";
 
-// Create CartContext
+// Tạo CartContext để quản lý giỏ hàng
 export const CartContext = createContext();
 
-// CartProvider component
+// Component CartProvider - Cung cấp context cho các component con
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]); // Khởi tạo giỏ hàng rỗng
 
-  // Add a product to the cart (increase quantity if already exists)
+  // Thêm sản phẩm vào giỏ hàng (tăng số lượng nếu đã tồn tại)
   const addToCart = useCallback((product) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
@@ -20,7 +20,7 @@ export const CartProvider = ({ children }) => {
     });
   }, []);
 
-  // Increase the quantity of a product
+  // Tăng số lượng sản phẩm
   const increaseQuantity = useCallback((id) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -29,7 +29,7 @@ export const CartProvider = ({ children }) => {
     );
   }, []);
 
-  // Decrease the quantity of a product (remove if quantity becomes 0)
+  // Giảm số lượng sản phẩm (xóa nếu số lượng bằng 0)
   const decreaseQuantity = useCallback((id) => {
     setCart((prevCart) => {
       const item = prevCart.find((item) => item.id === id);
@@ -42,17 +42,17 @@ export const CartProvider = ({ children }) => {
     });
   }, []);
 
-  // Remove a product from the cart
+  // Xóa sản phẩm khỏi giỏ hàng
   const removeFromCart = useCallback((id) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   }, []);
 
-  // Clear the entire cart
+  // Xóa toàn bộ giỏ hàng
   const clearCart = useCallback(() => {
     setCart([]);
   }, []);
 
-  // Context value
+  // Giá trị context
   const contextValue = {
     cart,
     addToCart,
