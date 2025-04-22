@@ -1,125 +1,92 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Tài Xỉu - Cược Tiền</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #1e1e2e;
-            color: #ffffff;
-        }
-        .game-container {
-            text-align: center;
-            background-color: #333;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-            width: 700px;
-        }
-        .balance {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #ffd700;
-        }
-        .result-display {
-            font-size: 60px;
-            margin: 20px 0;
-            color: #ff6347;
-        }
-        .bet-button {
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 24px;
-            border: none;
-            border-radius: 12px;
-            background-color: #2980b9;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .bet-button:hover {
-            background-color: #3498db;
-        }
-        .tai-button {
-            background-color: #27ae60;
-        }
-        .xiu-button {
-            background-color: #e74c3c;
-        }
-        .history {
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: #444;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        .history p {
-            margin: 5px 0;
-        }
-        input[type="number"] {
-            padding: 10px;
-            font-size: 20px;
-            width: 100px;
-            margin: 10px;
-            border-radius: 8px;
-            border: none;
-            text-align: center;
-        }
-    </style>
+    <title>Game Tài Xỉu</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <div class="balance" id="balance">Số dư: 1000$</div>
-        <input type="number" id="betAmount" placeholder="Cược ($)" min="1" max="10000" value="100">
-        <div class="result-display" id="result">8</div>
-        <button class="bet-button tai-button" onclick="placeBet('Tai')">TÀI</button>
-        <button class="bet-button xiu-button" onclick="placeBet('Xiu')">XỈU</button>
-        <div class="history" id="history">Lịch sử cược:</div>
+    <div class="container">
+        <h1>Game Tài Xỉu</h1>
+
+        <div class="balance">
+            Số tiền của bạn: <span id="current-balance">10000</span> đ
+        </div>
+
+        <div class="dice-bowl-container">
+            <div class="bowl" id="bowl"></div> <div class="dice-container"> <div class="dice" id="dice1">
+                    <span class="dot dot-1"></span>
+                    <span class="dot dot-2"></span>
+                    <span class="dot dot-3"></span>
+                    <span class="dot dot-4"></span>
+                    <span class="dot dot-5"></span>
+                    <span class="dot dot-6"></span>
+                    <span class="dot dot-7"></span>
+                </div>
+                <div class="dice" id="dice2">
+                     <span class="dot dot-1"></span>
+                    <span class="dot dot-2"></span>
+                    <span class="dot dot-3"></span>
+                    <span class="dot dot-4"></span>
+                    <span class="dot dot-5"></span>
+                    <span class="dot dot-6"></span>
+                    <span class="dot dot-7"></span>
+                </div>
+                <div class="dice" id="dice3">
+                     <span class="dot dot-1"></span>
+                    <span class="dot dot-2"></span>
+                    <span class="dot dot-3"></span>
+                    <span class="dot dot-4"></span>
+                    <span class="dot dot-5"></span>
+                    <span class="dot dot-6"></span>
+                    <span class="dot dot-7"></span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="timer">
+            Thời gian còn lại: <span id="time">10</span>s
+        </div>
+
+        <div class="betting-areas">
+            <div class="bet-area tai-area">
+                <h2>TÀI</h2>
+                <p>Tổng cược: <span id="total-bet-tai">0</span> đ</p>
+                <button class="place-bet-button" data-bet-type="tai">Đặt Cược TÀI</button>
+            </div>
+
+            <div class="bet-amount-input">
+                 <label for="bet-amount">Số tiền cược:</label>
+                <input type="number" id="bet-amount" min="1000" value="1000">
+            </div>
+
+            <div class="bet-area xiu-area">
+                <h2>XỈU</h2>
+                 <p>Tổng cược: <span id="total-bet-xiu">0</span> đ</p>
+                <button class="place-bet-button" data-bet-type="xiu">Đặt Cược XỈU</button>
+            </div>
+        </div>
+
+
+        <div class="result">
+            Kết quả: <span id="game-result">Chờ lắc xúc xắc...</span>
+        </div>
+
+        <div class="individual-dice-result" id="individual-dice-result">
+            </div>
+
+        <div class="history-section">
+            <h3>Lịch sử:</h3>
+            <div class="history-spheres-container" id="game-history">
+                </div>
+        </div>
+
+
+        <button id="start-game">Bắt đầu game mới</button>
     </div>
 
-    <script>
-        let balance = 1000;
-
-        function placeBet(choice) {
-            const bet = parseInt(document.getElementById('betAmount').value);
-            if (isNaN(bet) || bet <= 0 || bet > balance) {
-                alert('Số tiền cược không hợp lệ hoặc không đủ tiền!');
-                return;
-            }
-
-            const dice1 = Math.floor(Math.random() * 6) + 1;
-            const dice2 = Math.floor(Math.random() * 6) + 1;
-            const dice3 = Math.floor(Math.random() * 6) + 1;
-            const total = dice1 + dice2 + dice3;
-            const resultText = (total >= 11) ? 'Tài' : 'Xỉu';
-            const win = (resultText === 'Tài' && choice === 'Tai') || (resultText === 'Xỉu' && choice === 'Xiu');
-
-            if (win) {
-                balance += bet;
-                alert('Bạn thắng!');
-            } else {
-                balance -= bet;
-                alert('Bạn thua!');
-            }
-
-            document.getElementById('balance').innerText = `Số dư: ${balance}$`;
-            document.getElementById('result').innerText = total;
-
-            const history = document.getElementById('history');
-            const outcome = win ? 'Thắng' : 'Thua';
-            const newRecord = `Cược: ${bet}$ (${choice}) - Xúc xắc: ${dice1}, ${dice2}, ${dice3} - Tổng: ${total} - ${resultText} - ${outcome}`;
-            const p = document.createElement('p');
-            p.textContent = newRecord;
-            history.prepend(p);
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
