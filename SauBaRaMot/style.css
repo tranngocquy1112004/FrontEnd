@@ -4,32 +4,38 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f0f0;
+    background: linear-gradient to bottom( #4CAF50, #2e7d32); /* Nền gradient xanh lá */
     margin: 0;
-    /* overflow: hidden; */ /* Có thể giữ lại overflow hidden ở body nếu muốn ngăn cuộn toàn trang */
+    overflow-y: auto; /* Cho phép cuộn trang nếu nội dung dài */
 }
 
 .container {
-    background-color: #fff;
+    background-color: #fff; /* Giữ nền trắng cho container */
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Đổ bóng mạnh hơn */
     text-align: center;
     width: 450px;
     position: relative;
-    /* overflow: hidden; */ /* Xóa bỏ dòng này */
-    /* Thêm display: flex và flex-direction để quản lý layout cột */
     display: flex;
     flex-direction: column;
-    align-items: center; /* Căn giữa các mục theo chiều ngang */
+    align-items: center;
+    margin: 20px auto; /* Thêm margin trên dưới để cách lề trình duyệt */
+}
+
+h1 {
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Thêm đổ bóng cho tiêu đề */
 }
 
 .balance {
-    font-size: 1.2em;
+    font-size: 1.3em; /* Tăng kích thước chữ */
     margin-bottom: 20px;
-    color: #008CBA;
+    color: #ffeb3b; /* Màu vàng tươi cho số tiền */
     font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Đổ bóng cho chữ số tiền */
 }
+
 
 .dice-bowl-container {
     width: 180px;
@@ -53,136 +59,142 @@ body {
 }
 
 
-/* Định kiểu cho div.dice thay vì img.dice */
 .dice {
-    width: 50px;
-    height: 50px;
-    margin: 0 5px;
-    border: 1px solid #333;
-    border-radius: 8px;
+    width: 55px; /* Tăng kích thước xúc xắc một chút */
+    height: 55px;
+    margin: 0 7px; /* Tăng khoảng cách giữa các xúc xắc */
+    border: 2px solid #555; /* Viền đậm hơn */
+    border-radius: 10px; /* Bo góc hơn */
     background-color: #fff;
     position: relative;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 2px;
-    padding: 5px;
+    gap: 3px; /* Tăng khoảng cách giữa các chấm */
+    padding: 6px; /* Tăng khoảng đệm */
     box-sizing: border-box;
     transform-style: preserve-3d;
     transition: transform 0.1s ease-in-out;
     transform-origin: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng cho xúc xắc */
 }
 
 /* Định kiểu cho các chấm tròn */
 .dot {
-    display: block; /* Hiển thị chấm như block */
-    width: 8px; /* Kích thước chấm */
-    height: 8px;
-    background-color: #333; /* Màu chấm */
-    border-radius: 50%; /* Bo tròn để thành hình tròn */
-    /* Mặc định ẩn tất cả các chấm */
+    display: block;
+    width: 10px; /* Tăng kích thước chấm */
+    height: 10px;
+    background-color: #333;
+    border-radius: 50%;
     visibility: hidden;
 }
 
-/* Định vị các chấm trên lưới 3x3 */
-.dot-1 { grid-area: 3 / 1 / 4 / 2; /* Dưới cùng, bên trái */ }
-.dot-2 { grid-area: 2 / 2 / 3 / 3; /* Giữa, ở trung tâm */ } /* Sử dụng dot-2 cho chấm trung tâm */
-.dot-3 { grid-area: 1 / 3 / 2 / 4; /* Trên cùng, bên phải */ }
-.dot-4 { grid-area: 1 / 1 / 2 / 2; /* Trên cùng, bên trái */ }
-.dot-5 { grid-area: 3 / 3 / 4 / 4; /* Dưới cùng, bên phải */ }
-.dot-6 { grid-area: 2 / 1 / 3 / 2; /* Giữa, bên trái */ }
-.dot-7 { grid-area: 2 / 3 / 3 / 4; /* Giữa, bên phải */ }
+/* Định vị các chấm trên lưới 3x3 (giữ nguyên grid-area) */
+.dot-1 { grid-area: 3 / 1 / 4 / 2; }
+.dot-2 { grid-area: 2 / 2 / 3 / 3; }
+.dot-3 { grid-area: 1 / 3 / 2 / 4; }
+.dot-4 { grid-area: 1 / 1 / 2 / 2; }
+.dot-5 { grid-area: 3 / 3 / 4 / 4; }
+.dot-6 { grid-area: 2 / 1 / 3 / 2; }
+.dot-7 { grid-area: 2 / 3 / 3 / 4; }
 
 
-/* Quy tắc hiển thị chấm cho từng mặt */
-.dice.show-1 .dot-2 { visibility: visible; } /* Mặt 1: Chỉ hiện chấm trung tâm */
+/* Quy tắc hiển thị chấm cho từng mặt (giữ nguyên) */
+.dice.show-1 .dot-2 { visibility: visible; }
 .dice.show-2 .dot-4,
-.dice.show-2 .dot-5 { visibility: visible; } /* Mặt 2: Trên trái, dưới phải */
+.dice.show-2 .dot-5 { visibility: visible; }
 .dice.show-3 .dot-4,
 .dice.show-3 .dot-2,
-.dice.show-3 .dot-5 { visibility: visible; } /* Mặt 3: Trên trái, giữa, dưới phải */
+.dice.show-3 .dot-5 { visibility: visible; }
 .dice.show-4 .dot-1,
 .dice.show-4 .dot-3,
 .dice.show-4 .dot-4,
-.dice.show-4 .dot-5 { visibility: visible; } /* Mặt 4: Tất cả 4 góc */
+.dice.show-4 .dot-5 { visibility: visible; }
 .dice.show-5 .dot-1,
 .dice.show-5 .dot-2,
 .dice.show-5 .dot-3,
 .dice.show-5 .dot-4,
-.dice.show-5 .dot-5 { visibility: visible; } /* Mặt 5: 4 góc và giữa */
+.dice.show-5 .dot-5 { visibility: visible; }
 .dice.show-6 .dot-1,
 .dice.show-6 .dot-3,
 .dice.show-6 .dot-4,
 .dice.show-6 .dot-5,
 .dice.show-6 .dot-6,
-.dice.show-6 .dot-7 { visibility: visible; } /* Mặt 6: Tất cả trừ chấm trung tâm */
+.dice.show-6 .dot-7 { visibility: visible; }
 
 
-/* Animation lắc xúc xắc (có thể cần điều chỉnh cho phù hợp với div) */
+/* Animation lắc xúc xắc */
 @keyframes shake {
     0% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(-2px, -2px) rotate(-1deg); }
-    50% { transform: translate(2px, 2px) rotate(1deg); }
-    75% { transform: translate(-2px, 2px) rotate(-1deg); }
+    25% { transform: translate(-3px, -3px) rotate(-2deg); } /* Tăng biên độ lắc */
+    50% { transform: translate(3px, 3px) rotate(2deg); }
+    75% { transform: translate(-3px, 3px) rotate(-2deg); }
     100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 .dice.shaking {
-    animation: shake 0.2s infinite;
+    animation: shake 0.15s infinite; /* Tăng tốc độ lắc */
 }
 
 
+/* Style cho cái bát - Chỉnh kích thước và vị trí */
 .bowl {
     position: absolute;
-    width: 200px; /* Tăng chiều rộng của bát */
-    height: 120px; /* Tăng chiều cao của bát */
-    background-color: #5a3f2a;
-    border-radius: 50% 50% 10% 10%;
-    /* bottom: 0; */ /* Bỏ bottom: 0 */
-    /* center the bowl over the dice-container */
+    width: 220px; /* Tăng kích thước bát nữa */
+    height: 140px;
+    background: linear-gradient to top(#795548, #5d4037); /* Gradient cho bát */
+    border-radius: 50% 50% 15% 15%; /* Bo tròn nhiều hơn */
     top: 50%;
+    background-color: #a52a2a;
     left: 50%;
-    transform: translate(-50%, -50%); /* Căn giữa cả theo chiều ngang và dọc */
+    transform: translate(-50%, -50%);
     z-index: 10;
     transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
     cursor: pointer;
-     /* Đảm bảo bát che hết xúc xắc khi ở trạng thái bình thường */
-     opacity: 1;
-     pointer-events: auto; /* Bắt sự kiện click khi bát đang hiển thị */
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Đổ bóng cho bát */
 }
 
-
+/* Style khi bát bị nhấc lên (ẩn đi) */
 .bowl.hidden {
-    transform: translate(-50%, -150px); /* Di chuyển bát lên cao hơn khi ẩn */
+    transform: translate(-50%, -200px); /* Di chuyển bát lên cao hơn khi ẩn */
     opacity: 0;
-    pointer-events: none; /* Ngăn chặn sự kiện click khi ẩn */
+    pointer-events: none;
 }
 
 
 .timer {
     margin-bottom: 20px;
-    font-size: 1.2em;
-    color: #333;
+    font-size: 1.4em; /* Tăng kích thước chữ */
+    color: #e53935; /* Màu đỏ cho timer */
     font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .betting-areas {
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch; /* Căn các mục giãn ra theo chiều dọc */
     margin-bottom: 20px;
     padding: 15px;
     border: 1px solid #eee;
     border-radius: 8px;
+    background-color: #fafafa; /* Nền nhẹ cho khu vực đặt cược */
 }
 
+/* Style cho từng khu vực Tài/Xỉu */
 .bet-area {
     flex: 1;
-    padding: 10px;
+    padding: 15px 10px; /* Tăng padding */
     border: 1px solid #ccc;
     border-radius: 8px;
     text-align: center;
-    margin: 0 5px;
+    margin: 0 8px; /* Tăng khoảng cách giữa các khu vực */
+    display: flex; /* Sử dụng flexbox bên trong bet-area */
+    flex-direction: column; /* Xếp nội dung theo cột */
+    justify-content: space-between; /* Tạo khoảng trống giữa các mục con */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Hiệu ứng hover/active */
 }
 
 .tai-area {
@@ -195,10 +207,21 @@ body {
      border-color: #f44336;
 }
 
+/* Hiệu ứng khi di chuột hoặc active */
+.bet-area:hover:not(:disabled) {
+    transform: translateY(-3px); /* Nhấc nhẹ lên khi hover */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.bet-area:active:not(:disabled) {
+    transform: translateY(0); /* Trở lại vị trí cũ khi active */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
 .bet-area h2 {
     margin-top: 0;
     color: #333;
-    font-size: 1.5em;
+    font-size: 1.6em; /* Tăng kích thước chữ */
     margin-bottom: 5px;
 }
 
@@ -211,51 +234,60 @@ body {
 
 
 .bet-area p {
-    font-size: 1em;
+    font-size: 1.1em; /* Tăng kích thước chữ */
     margin-bottom: 10px;
     color: #555;
 }
 .bet-area span {
     font-weight: bold;
+    color: #000; /* Làm màu chữ đen cho rõ */
 }
 
 
 .bet-amount-input {
     text-align: center;
-    padding: 0 10px;
+    padding: 0 15px; /* Tăng padding */
 }
 
 .bet-amount-input label {
     display: block;
-    font-size: 0.9em;
-    margin-bottom: 5px;
+    font-size: 1em; /* Tăng kích thước chữ */
+    margin-bottom: 8px; /* Tăng khoảng cách */
     color: #555;
 }
 
 .bet-amount-input input[type="number"] {
-    padding: 5px;
-    font-size: 1em;
+    padding: 8px; /* Tăng padding */
+    font-size: 1.1em; /* Tăng kích thước chữ */
     border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 80px;
+    border-radius: 5px; /* Bo góc hơn */
+    width: 90px; /* Tăng chiều rộng */
     text-align: center;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1); /* Đổ bóng inset */
 }
 
 
 .place-bet-button {
-     padding: 8px 15px;
-    font-size: 1em;
+     padding: 10px 20px; /* Tăng padding */
+    font-size: 1.1em; /* Tăng kích thước chữ */
     background-color: #FF9800;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px; /* Bo góc hơn */
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.1s ease-in-out; /* Thêm transition */
+    margin-top: 15px; /* Tăng khoảng cách */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng */
 }
 
 .place-bet-button:hover:not(:disabled) {
     background-color: #f57c00;
+    transform: translateY(-1px); /* Nhấc nhẹ lên khi hover */
+}
+.place-bet-button:active:not(:disabled) {
+     background-color: #e65100; /* Màu đậm hơn khi active */
+     transform: translateY(0); /* Trở lại vị trí cũ */
+     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -264,77 +296,77 @@ input:disabled {
     background-color: #cccccc !important;
     cursor: not-allowed !important;
     opacity: 0.6;
+    box-shadow: none !important; /* Xóa bóng khi disabled */
 }
 
 
 .result {
-    margin-top: 20px;
-    font-size: 1.3em;
+    margin-top: 25px; /* Tăng khoảng cách */
+    font-size: 1.4em; /* Tăng kích thước chữ */
     font-weight: bold;
-    min-height: 1.3em;
-    color: #333;
+    min-height: 1.4em;
+    color: #00796b; /* Màu kết quả */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .individual-dice-result {
-    margin-top: 10px;
-    font-size: 1em;
+    margin-top: 8px; /* Giảm khoảng cách */
+    font-size: 1.1em; /* Tăng kích thước chữ */
     color: #555;
-    min-height: 1em;
+    min-height: 1.1em;
+    font-weight: normal; /* Đặt lại font-weight */
 }
 
-/* Style cho khu vực lịch sử */
 .history-section {
-    margin-top: 20px;
-    text-align: left;
+    margin-top: 25px; /* Tăng khoảng cách */
     border-top: 1px solid #eee;
     padding-top: 15px;
-    /* Bỏ max-height và overflow-y ở đây */
+    text-align: center; /* Căn giữa toàn bộ phần lịch sử */
 }
 
 .history-section h3 {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* Tăng khoảng cách */
     color: #333;
-    text-align: center; /* Căn giữa tiêu đề lịch sử */
+    text-align: center;
 }
 
-/* Container cho các quả cầu lịch sử (thay cho ul) */
 .history-spheres-container {
-    display: flex; /* Sử dụng flexbox để xếp các quả cầu ngang hàng */
-    overflow-x: auto; /* Thêm thanh cuộn ngang khi cần */
-    padding-bottom: 10px; /* Khoảng đệm dưới cho thanh cuộn */
-    /* white-space: nowrap; */ /* Tùy chọn: ngăn các mục xuống dòng */
-    justify-content: flex-start; /* Bắt đầu xếp từ trái */
-     align-items: center; /* Căn giữa theo chiều dọc */
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    justify-content: center; /* Căn giữa các quả cầu nếu chúng không lấp đầy */
+    align-items: center;
+    max-width: 100%; /* Đảm bảo container không tràn ra ngoài */
 }
 
-/* Style cho từng quả cầu lịch sử (thay cho li) */
 .history-sphere {
-    width: 20px; /* Kích thước quả cầu */
-    height: 20px;
-    border-radius: 50%; /* Biến thành hình tròn */
-    margin: 0 3px; /* Khoảng cách giữa các quả cầu */
-    flex-shrink: 0; /* Ngăn quả cầu bị co lại khi không đủ chỗ */
-    border: 1px solid #ccc; /* Viền nhẹ */
-    cursor: pointer; /* Tùy chọn: thêm con trỏ tay nếu muốn tương tác */
-     /* Center the number inside (optional) */
+    width: 22px; /* Tăng kích thước quả cầu */
+    height: 22px;
+    border-radius: 50%;
+    margin: 0 4px; /* Tăng khoảng cách giữa các quả cầu */
+    flex-shrink: 0;
+    border: 2px solid #fff; /* Viền trắng nổi bật */
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Đổ bóng cho quả cầu */
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-     font-size: 0.7em;
-     color: #333; /* Màu chữ số bên trong */
-     font-weight: bold;
+    font-size: 0.8em; /* Tăng kích thước chữ số */
+    color: #fff; /* Màu chữ số (sẽ bị ghi đè cho nền trắng) */
+    font-weight: bold;
 }
 
 /* Màu cho quả cầu Tài */
 .history-sphere.tai {
-    background-color: #fff; /* Màu trắng */
+    background-color: #fff;
+     color: #333; /* Màu chữ đen trên nền trắng */
 }
 
 /* Màu cho quả cầu Xỉu */
 .history-sphere.xiu {
-    background-color: #333; /* Màu đen */
-     color: #fff; /* Đổi màu chữ cho dễ nhìn trên nền đen */
+    background-color: #333;
+     color: #fff;
 }
 
 /* Ẩn thanh cuộn trên một số trình duyệt (tùy chọn) */
@@ -343,27 +375,34 @@ input:disabled {
 }
 
 .history-spheres-container::-webkit-scrollbar-thumb {
-    background-color: #ccc;
+    background-color: #a5d6a7; /* Màu xanh lá nhạt */
     border-radius: 4px;
 }
 
 .history-spheres-container::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
+    background-color: #e8f5e9; /* Màu xanh lá siêu nhạt */
 }
 
 
 #start-game {
-    padding: 10px 20px;
-    font-size: 1.1em;
-    background-color: #008CBA;
+    padding: 12px 25px; /* Tăng kích thước nút */
+    font-size: 1.2em; /* Tăng kích thước chữ */
+    background-color: #0288d1; /* Màu xanh dương đậm */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.1s ease-in-out;
+    margin-top: 30px; /* Tăng khoảng cách */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #start-game:hover:not(:disabled) {
-    background-color: #007bb5;
+    background-color: #0277bd;
+    transform: translateY(-1px);
+}
+#start-game:active:not(:disabled) {
+     background-color: #01579b;
+     transform: translateY(0);
+     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
