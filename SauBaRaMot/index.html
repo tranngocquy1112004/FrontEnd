@@ -7,84 +7,125 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Xìu hay Tải?</h1>
+    <div class="game-and-chat-container">
+        <div class="container">
+            <h1>Game Tài Xỉu</h1>
 
-        <div class="balance">
-            Số tiền của bạn: <span id="current-balance">10000</span> đ
-        </div>
+            <div class="balance">
+                Số tiền của bạn: <span id="current-balance">10000</span> đ
+                <button id="reset-balance">Đặt lại tiền</button>
+            </div>
 
-        <div class="dice-bowl-container">
-            <div class="bowl" id="bowl"></div> <div class="dice-container"> <div class="dice" id="dice1">
-                    <span class="dot dot-1"></span>
-                    <span class="dot dot-2"></span>
-                    <span class="dot dot-3"></span>
-                    <span class="dot dot-4"></span>
-                    <span class="dot dot-5"></span>
-                    <span class="dot dot-6"></span>
-                    <span class="dot dot-7"></span>
+            <div class="dice-bowl-container">
+                <div class="bowl" id="bowl"></div>
+                <div class="dice-container">
+                    <div class="dice" id="dice1">
+                        <span class="dot dot-1"></span>
+                        <span class="dot dot-2"></span>
+                        <span class="dot dot-3"></span>
+                        <span class="dot dot-4"></span>
+                        <span class="dot dot-5"></span>
+                        <span class="dot dot-6"></span>
+                        <span class="dot dot-7"></span>
+                    </div>
+                    <div class="dice" id="dice2">
+                         <span class="dot dot-1"></span>
+                         <span class="dot dot-2"></span>
+                         <span class="dot dot-3"></span>
+                         <span class="dot dot-4"></span>
+                         <span class="dot dot-5"></span>
+                         <span class="dot dot-6"></span>
+                         <span class="dot dot-7"></span>
+                     </div>
+                     <div class="dice" id="dice3">
+                         <span class="dot dot-1"></span>
+                         <span class="dot dot-2"></span>
+                         <span class="dot dot-3"></span>
+                         <span class="dot dot-4"></span>
+                         <span class="dot dot-5"></span>
+                         <span class="dot dot-6"></span>
+                         <span class="dot dot-7"></span>
+                     </div>
                 </div>
-                <div class="dice" id="dice2">
-                     <span class="dot dot-1"></span>
-                    <span class="dot dot-2"></span>
-                    <span class="dot dot-3"></span>
-                    <span class="dot dot-4"></span>
-                    <span class="dot dot-5"></span>
-                    <span class="dot dot-6"></span>
-                    <span class="dot dot-7"></span>
+            </div>
+
+
+            <div class="timer">
+                Thời gian còn lại: <span id="time">60</span>s
+            </div>
+
+            <div class="betting-areas">
+                <div class="bet-area tai-area">
+                    <h2>TÀI</h2>
+                    <p>Tổng cược: <span id="total-bet-tai">0</span> đ</p>
+                    <button class="place-bet-button" data-bet-type="tai">Đặt Cược TÀI</button>
                 </div>
-                <div class="dice" id="dice3">
-                     <span class="dot dot-1"></span>
-                    <span class="dot dot-2"></span>
-                    <span class="dot dot-3"></span>
-                    <span class="dot dot-4"></span>
-                    <span class="dot dot-5"></span>
-                    <span class="dot dot-6"></span>
-                    <span class="dot dot-7"></span>
+
+                <div class="bet-amount-input">
+                     <label for="bet-amount">Số tiền cược:</label>
+                     <input type="number" id="bet-amount" min="1000" value="1000">
+                     <div class="quick-bet-buttons">
+                         <button class="quick-bet-button" data-amount="1000">1k</button>
+                         <button class="quick-bet-button" data-amount="5000">5k</button>
+                         <button class="quick-bet-button" data-amount="10000">10k</button>
+                         <button class="quick-bet-button" data-amount="all">All In</button>
+                     </div>
+                </div>
+
+                <div class="bet-area xiu-area">
+                    <h2>XỈU</h2>
+                     <p>Tổng cược: <span id="total-bet-xiu">0</span> đ</p>
+                    <button class="place-bet-button" data-bet-type="xiu">Đặt Cược XỈU</button>
                 </div>
             </div>
-        </div>
 
 
-        <div class="timer">
-            Thời gian còn lại: <span id="time">10</span>s
-        </div>
-
-        <div class="betting-areas">
-            <div class="bet-area tai-area">
-                <h2>TÀI</h2>
-                <p>Tổng cược: <span id="total-bet-tai">0</span> đ</p>
-                <button class="place-bet-button" data-bet-type="tai">Đặt Cược TÀI</button>
+            <div class="result">
+                Kết quả: <span id="game-result">Chờ lắc xúc xắc...</span>
             </div>
 
-            <div class="bet-amount-input">
-                 <label for="bet-amount">Số tiền cược:</label>
-                <input type="number" id="bet-amount" min="1000" value="1000">
+            <div class="individual-dice-result" id="individual-dice-result">
+                 </div>
+
+            <div class="history-section">
+                <h3>Lịch sử:</h3>
+                <div class="history-spheres-container" id="game-history">
+                     </div>
             </div>
 
-            <div class="bet-area xiu-area">
-                <h2>XỈU</h2>
-                 <p>Tổng cược: <span id="total-bet-xiu">0</span> đ</p>
-                <button class="place-bet-button" data-bet-type="xiu">Đặt Cược XỈU</button>
-            </div>
+
+            <button id="start-game">Bắt đầu game mới</button>
         </div>
 
-
-        <div class="result">
-            Kết quả: <span id="game-result">Chờ lắc xúc xắc...</span>
-        </div>
-
-        <div class="individual-dice-result" id="individual-dice-result">
+         <div class="chatbox">
+            <h3>Chat</h3>
+            <div class="chat-messages" id="chat-messages">
+                 </div>
+             <div class="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Nhập tin nhắn...">
+                <button id="send-chat-message">Gửi</button>
             </div>
-
-        <div class="history-section">
-            <h3>Lịch sử:</h3>
-            <div class="history-spheres-container" id="game-history">
+        </div>
+    </div> <div class="session-history-section">
+        <h3>Lịch sử Phiên</h3>
+        <div class="session-counts">
+            <span>Tài: <span id="session-count-tai">0</span></span>
+            <span>Xỉu: <span id="session-count-xiu">0</span></span>
+        </div>
+        <div class="session-history-grid-container">
+            <div class="session-history-grid" id="session-history-grid">
                 </div>
         </div>
 
+        <div class="session-pagination">
+            <button id="prev-page">Trước</button>
+            <span id="page-info">Trang 1 / 1</span>
+            <button id="next-page">Sau</button>
+        </div>
 
-        <button id="start-game">Bắt đầu game mới</button>
+        <div class="session-detailed-history" id="session-detailed-history">
+            <h4>Chi tiết:</h4>
+            </div>
     </div>
 
     <script src="script.js"></script>

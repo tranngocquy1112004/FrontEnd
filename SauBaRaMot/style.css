@@ -4,44 +4,184 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(to bottom, #4CAF50, #2e7d32); /* Nền gradient xanh lá */
+    background: linear-gradient(to bottom, #4CAF50, #2e7d32);
     margin: 0;
-    overflow-y: auto; /* Cho phép cuộn trang nếu nội dung dài */
+    overflow-y: auto;
+    padding: 20px;
+    flex-direction: column; /* Body xếp các phần tử con theo cột */
 }
+
+/* Style cho container bọc cả game và chat để xếp cạnh nhau */
+.game-and-chat-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 20px auto; /* Căn giữa và tạo khoảng cách dưới */
+    width: 100%; /* Đảm bảo container tổng sử dụng toàn bộ chiều rộng khả dụng */
+    flex-direction: row; /* Mặc định xếp ngang trên màn hình lớn */
+    justify-content: center; /* Căn giữa game và chat */
+}
+
 
 .container {
-    background-color: #fff; /* Giữ nền trắng cho container */
+    background-color: #fff;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Đổ bóng mạnh hơn */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 450px;
+    width: 450px; /* Giữ chiều rộng cố định trên màn hình lớn */
     position: relative;
-    /* Xóa overflow: hidden; */
-    /* Thêm display: flex và flex-direction để quản lý layout cột */
     display: flex;
     flex-direction: column;
-    align-items: center; /* Căn giữa các mục theo chiều ngang */
-    margin: 20px auto; /* Thêm margin trên dưới để cách lề trình duyệt */
+    align-items: center;
+    flex-shrink: 0; /* Ngăn không cho co lại */
 }
 
+/* Style cho thanh chat */
+.chatbox {
+    width: 300px; /* Giữ chiều rộng cố định trên màn hình lớn */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* Ngăn không cho co lại */
+    /* Điều chỉnh chiều cao để phù hợp với container game trên màn hình lớn */
+    height: 600px; /* Chiều cao cố định trên màn hình lớn */
+    justify-content: space-between; /* Đẩy input xuống dưới cùng */
+}
+
+.chatbox h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #333;
+}
+
+.chat-messages {
+    flex-grow: 1; /* Choán hết không gian trống */
+    overflow-y: auto; /* Bật cuộn khi tin nhắn tràn */
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px; /* Khoảng cách giữa tin nhắn và input */
+}
+
+.chat-message {
+    background-color: #e0e0e0;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    text-align: left;
+    word-break: break-word; /* Ngắt dòng cho các từ dài */
+    max-width: 90%; /* Giới hạn chiều rộng tin nhắn */
+    align-self: flex-start; /* Mặc định căn trái cho tin nhắn AI */
+}
+
+/* Style cho tin nhắn của người chơi */
+.chat-message.self {
+    background-color: #c8e6c9; /* Màu xanh nhạt */
+    text-align: right;
+    align-self: flex-end; /* Căn phải cho tin nhắn của mình */
+}
+/* Style cho tin nhắn hệ thống */
+.chat-message.system {
+    background-color: #fff9c4; /* Màu vàng nhạt */
+    text-align: center;
+    font-style: italic;
+    font-size: 0.85em;
+    color: #555;
+}
+
+
+/* --- Style cho ô nhập và nút gửi tin nhắn --- */
+.chat-input {
+    display: flex;
+    gap: 5px;
+    padding-top: 10px; /* Khoảng cách với phần tin nhắn */
+    border-top: 1px solid #eee; /* Đường kẻ phân cách */
+}
+
+.chat-input input[type="text"] {
+    flex-grow: 1; /* Ô input choán hết không gian còn lại */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9em;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.chat-input button {
+    padding: 8px 15px;
+    background-color: #4CAF50; /* Màu xanh lá cây */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease-in-out;
+    font-size: 0.9em;
+    flex-shrink: 0; /* Ngăn nút bị co lại */
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.chat-input button:hover:not(:disabled) {
+    background-color: #388E3C; /* Màu xanh đậm hơn khi hover */
+    transform: translateY(-1px);
+}
+.chat-input button:active:not(:disabled) {
+    background-color: #2E7D32; /* Màu xanh đậm hơn khi active */
+    transform: translateY(0);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+
+/* --- Các style đã có từ trước --- */
 h1 {
     color: #333;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Thêm đổ bóng cho tiêu đề */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .balance {
-    font-size: 1.3em; /* Tăng kích thước chữ */
+    font-size: 1.3em;
     margin-bottom: 20px;
-    color: #ffeb3b; /* Màu vàng tươi cho số tiền */
+    color: #ffeb3b;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Đổ bóng cho chữ số tiền */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap; /* Cho phép các mục xuống dòng nếu không đủ chỗ */
+}
+
+#reset-balance {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background-color: #fbc02d;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#reset-balance:hover:not(:disabled) {
+    background-color: #f9a825;
+}
+#reset-balance:active:not(:disabled) {
+    background-color: #f57f17;
 }
 
 
 .dice-bowl-container {
-    width: 180px;
-    height: 100px;
+    width: 250px; /* Tăng chiều rộng container để chứa cả 3 xúc xắc */
+    height: 140px; /* Tăng chiều cao container */
     margin: 20px auto;
     position: relative;
     display: flex;
@@ -55,134 +195,128 @@ h1 {
     align-items: center;
     width: 100%;
     height: 100%;
-     position: absolute;
+     position: absolute; /* Đặt tuyệt đối so với container relative */
      top: 0;
      left: 0;
+     pointer-events: none; /* Ngăn chặn click/kéo vào container này */
 }
 
 
-/* Định kiểu cho div.dice thay vì img.dice */
 .dice {
-    width: 55px; /* Tăng kích thước xúc xắc một chút */
-    height: 55px;
-    margin: 0 7px; /* Tăng khoảng cách giữa các xúc xắc */
-    border: 2px solid #555; /* Viền đậm hơn */
-    border-radius: 10px; /* Bo góc hơn */
+    width: 60px; /* Tăng kích thước xúc xắc */
+    height: 60px;
+    margin: 0 8px; /* Tăng khoảng cách giữa các xúc xắc */
+    border: 2px solid #555;
+    border-radius: 10px;
     background-color: #fff;
-    position: relative; /* Quan trọng để định vị các chấm bên trong */
-    display: grid; /* Sử dụng Grid để định vị các chấm dễ dàng */
-    grid-template-columns: repeat(3, 1fr); /* Chia làm 3 cột bằng nhau */
-    grid-template-rows: repeat(3, 1fr); /* Chia làm 3 hàng bằng nhau */
-    gap: 3px; /* Tăng khoảng cách giữa các ô grid */
-    padding: 6px; /* Khoảng đệm bên trong viên xúc xắc */
-    box-sizing: border-box; /* Tính cả padding vào kích thước */
-    transform-style: preserve-3d; /* Chuẩn bị cho 3D transforms nếu muốn animation phức tạp hơn */
-    transition: transform 0.1s ease-in-out; /* Thêm transition cho hiệu ứng lắc nhanh */
-    transform-origin: center; /* Tâm quay */
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng cho xúc xắc */
+    position: relative; /* Quan trọng cho việc định vị các chấm */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 4px; /* Tăng khoảng cách giữa các chấm */
+    padding: 8px; /* Tăng padding */
+    box-sizing: border-box;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-in-out;
+    transform-origin: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    pointer-events: none; /* Ngăn chặn click/kéo vào xúc xắc */
 }
 
-/* Định kiểu cho các chấm tròn */
 .dot {
-    display: block; /* Hiển thị chấm như block */
-    width: 10px; /* Kích thước chấm */
-    height: 10px;
-    background-color: #333; /* Màu chấm */
-    border-radius: 50%; /* Bo tròn để thành hình tròn */
-    /* Mặc định ẩn tất cả các chấm */
+    display: block;
+    width: 12px; /* Tăng kích thước chấm */
+    height: 12px;
+    background-color: #333;
+    border-radius: 50%;
     visibility: hidden;
 }
 
 /* Định vị các chấm trên lưới 3x3 */
-.dot-1 { grid-area: 3 / 1 / 4 / 2; /* Dưới cùng, bên trái */ }
-.dot-2 { grid-area: 2 / 2 / 3 / 3; /* Giữa, ở trung tâm */ } /* Sử dụng dot-2 cho chấm trung tâm */
-.dot-3 { grid-area: 1 / 3 / 2 / 4; /* Trên cùng, bên phải */ }
-.dot-4 { grid-area: 1 / 1 / 2 / 2; /* Trên cùng, bên trái */ }
-.dot-5 { grid-area: 3 / 3 / 4 / 4; /* Dưới cùng, bên phải */ }
-.dot-6 { grid-area: 2 / 1 / 3 / 2; /* Giữa, bên trái */ }
-.dot-7 { grid-area: 2 / 3 / 3 / 4; /* Giữa, bên phải */ }
+.dot-1 { grid-area: 3 / 1 / 4 / 2; } /* bottom-left */
+.dot-2 { grid-area: 2 / 2 / 3 / 3; } /* center */
+.dot-3 { grid-area: 1 / 3 / 2 / 4; } /* top-right */
+.dot-4 { grid-area: 1 / 1 / 2 / 2; } /* top-left */
+.dot-5 { grid-area: 3 / 3 / 4 / 4; } /* bottom-right */
+.dot-6 { grid-area: 2 / 1 / 3 / 2; } /* center-left */
+.dot-7 { grid-area: 2 / 3 / 3 / 4; } /* center-right */
 
 
-/* Quy tắc hiển thị chấm cho từng mặt */
-.dice.show-1 .dot-2 { visibility: visible; } /* Mặt 1: Chỉ hiện chấm trung tâm */
+/* Hiển thị chấm cho từng giá trị xúc xắc */
+.dice.show-1 .dot-2 { visibility: visible; }
 .dice.show-2 .dot-4,
-.dice.show-2 .dot-5 { visibility: visible; } /* Mặt 2: Trên trái, dưới phải */
+.dice.show-2 .dot-5 { visibility: visible; }
 .dice.show-3 .dot-4,
 .dice.show-3 .dot-2,
-.dice.show-3 .dot-5 { visibility: visible; } /* Mặt 3: Trên trái, giữa, dưới phải */
+.dice.show-3 .dot-5 { visibility: visible; }
 .dice.show-4 .dot-1,
 .dice.show-4 .dot-3,
 .dice.show-4 .dot-4,
-.dice.show-4 .dot-5 { visibility: visible; } /* Mặt 4: Tất cả 4 góc */
+.dice.show-4 .dot-5 { visibility: visible; }
 .dice.show-5 .dot-1,
 .dice.show-5 .dot-2,
 .dice.show-5 .dot-3,
 .dice.show-5 .dot-4,
-.dice.show-5 .dot-5 { visibility: visible; } /* Mặt 5: 4 góc và giữa */
+.dice.show-5 .dot-5 { visibility: visible; }
 .dice.show-6 .dot-1,
 .dice.show-6 .dot-3,
 .dice.show-6 .dot-4,
 .dice.show-6 .dot-5,
 .dice.show-6 .dot-6,
-.dice.show-6 .dot-7 { visibility: visible; } /* Mặt 6: Tất cả trừ chấm trung tâm */
+.dice.show-6 .dot-7 { visibility: visible; }
 
 
-/* Animation lắc xúc xắc */
 @keyframes shake {
     0% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(-3px, -3px) rotate(-2deg); } /* Tăng biên độ lắc */
+    25% { transform: translate(-3px, -3px) rotate(-2deg); }
     50% { transform: translate(3px, 3px) rotate(2deg); }
     75% { transform: translate(-3px, 3px) rotate(-2deg); }
     100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 .dice.shaking {
-    animation: shake 0.15s infinite; /* Tăng tốc độ lắc */
+    animation: shake 0.15s infinite;
 }
 
 
-/* Style cho cái bát */
 .bowl {
-    position: absolute;
-    width: 220px; /* Kích thước bát */
+    position: absolute; /* Đặt tuyệt đối so với .dice-bowl-container */
+    width: 220px;
     height: 140px;
-    background: linear-gradient(to top, #795548, #5d4037); /* Màu gradient nâu */
-    border-radius: 50% 50% 15% 15%; /* Bo tròn nhiều hơn */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Căn giữa */
-    z-index: 10;
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    cursor: pointer;
+    background: linear-gradient(to top, #795548, #5d4037);
+    border-radius: 50% 50% 15% 15%;
+    top: 50%; /* Căn giữa theo chiều dọc trong container */
+    left: 50%; /* Căn giữa theo chiều ngang trong container */
+    transform: translate(-50%, -50%); /* Dịch chuyển lại 50% kích thước của nó để căn giữa chính xác */
+    z-index: 10; /* Đảm bảo ở trên xúc xắc */
+    transition: opacity 0.5s ease-in-out; /* Chỉ transition opacity khi ẩn */
+    cursor: pointer; /* Thay đổi cursor khi có thể tương tác (sẽ được JS thay đổi) */
     opacity: 1;
-    pointer-events: auto;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Đổ bóng cho bát */
+    pointer-events: auto; /* Cho phép tương tác chuột */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
-/* Style khi bát bị nhấc lên (ẩn đi) */
 .bowl.hidden {
-    transform: translate(-50%, -200px); /* Di chuyển bát lên cao hơn khi ẩn */
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0; /* Ẩn bát bằng opacity */
+    pointer-events: none; /* Không nhận tương tác chuột khi ẩn */
+    /* Không cần transform nữa khi ẩn, chỉ cần opacity 0 */
 }
 
 
 .timer {
     margin-bottom: 20px;
     font-size: 1.4em;
-    color: #333; /* Màu mặc định */
+    color: #333;
     font-weight: bold;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-    transition: color 0.3s ease; /* Thêm hiệu ứng chuyển màu */
+    transition: color 0.3s ease;
 }
 
-/* Style khi thời gian thấp */
 .timer.low-time {
-    color: #e53935; /* Màu đỏ */
-    animation: pulse 1s infinite; /* Thêm animation nhấp nháy */
+    color: #e53935;
+    animation: pulse 1s infinite;
 }
 
-/* Keyframes cho animation nhấp nháy */
 @keyframes pulse {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
@@ -198,10 +332,9 @@ h1 {
     padding: 15px;
     border: 1px solid #eee;
     border-radius: 8px;
-    background-color: #fafafa; /* Nền nhẹ cho khu vực đặt cược */
+    background-color: #fafafa;
 }
 
-/* Style cho từng khu vực Tài/Xỉu */
 .bet-area {
     flex: 1;
     padding: 15px 10px;
@@ -225,7 +358,6 @@ h1 {
      border-color: #f44336;
 }
 
-/* Hiệu ứng khi di chuột hoặc active */
 .bet-area:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -285,7 +417,6 @@ h1 {
     margin-bottom: 10px;
 }
 
-/* Style cho container các nút cược nhanh */
 .quick-bet-buttons {
     display: flex;
     justify-content: center;
@@ -293,7 +424,6 @@ h1 {
     flex-wrap: wrap;
 }
 
-/* Style cho từng nút cược nhanh */
 .quick-bet-button {
     padding: 5px 10px;
     font-size: 0.9em;
@@ -404,14 +534,21 @@ input:disabled {
 }
 
 .history-sphere.tai {
-    background-color: #fff;
-     color: #333;
+     background-color: #4CAF50; /* Màu xanh lá cây cho Tài */
+     color: #fff;
 }
 
 .history-sphere.xiu {
-    background-color: #333;
+     background-color: #f44336; /* Màu đỏ cho Xỉu */
      color: #fff;
 }
+
+/* Style cho quả cầu Bộ ba đồng nhất */
+.history-sphere.triple {
+    background-color: #333; /* Màu tối cho Bộ ba */
+    color: #fff;
+}
+
 
 /* Ẩn thanh cuộn trên một số trình duyệt (tùy chọn) */
 .history-spheres-container::-webkit-scrollbar {
@@ -449,4 +586,323 @@ input:disabled {
      background-color: #01579b;
      transform: translateY(0);
      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Style cho Lịch sử Phiên mới --- */
+.session-history-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    margin: 20px auto; /* Căn giữa block */
+    max-width: 800px; /* Giới hạn chiều rộng */
+    width: 95%; /* Sử dụng phần trăm trên màn hình nhỏ */
+}
+
+.session-history-section h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.session-counts {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #555;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.session-counts span {
+    font-weight: bold;
+}
+
+#session-count-tai {
+    color: #4CAF50; /* Green for Tài */
+}
+
+#session-count-xiu {
+    color: #f44336; /* Red for Xỉu */
+}
+
+
+.session-history-grid-container {
+    /* Optional: Add border or background for the grid area */
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow-x: auto; /* Bật cuộn ngang nếu cần */
+    margin-bottom: 15px;
+}
+
+.session-history-grid {
+    display: grid;
+    /* Số cột cố định, hàng tự động */
+    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); /* Tạo cột 30px, tự động lấp đầy */
+    grid-auto-rows: 30px; /* Chiều cao hàng 30px */
+    gap: 5px; /* Khoảng cách giữa các item */
+    justify-content: center; /* Căn giữa nội dung lưới */
+    min-width: max-content; /* Ngăn lưới co lại nhỏ hơn nội dung */
+    padding-bottom: 5px; /* Khoảng trống cho thanh cuộn */
+}
+
+/* Style cho từng item trong lưới (quả cầu kết quả) */
+.history-grid-item {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%; /* Làm tròn thành quả cầu */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: white;
+    border: 1px solid #ccc; /* Viền */
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0; /* Quan trọng: ngăn các item co lại khi có nhiều */
+}
+
+.history-grid-item.tai {
+    background-color: #03a9f4; /* Blue color cho Tài */
+    border-color: #0288d1;
+}
+
+.history-grid-item.xiu {
+    background-color: #bdbdbd; /* Grey color cho Xỉu */
+    color: #333;
+    border-color: #9e9e9e;
+}
+
+/* Style cho quả cầu Bộ ba đồng nhất trong lưới */
+.history-grid-item.triple {
+    background-color: #333; /* Màu tối cho Bộ ba */
+    color: #fff;
+    border-color: #000;
+}
+
+/* Style cho phân trang */
+.session-pagination {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.session-pagination button {
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.session-pagination button:hover:not(:disabled) {
+     background-color: #d5d5d5;
+}
+
+.session-pagination button:active:not(:disabled) {
+    background-color: #bdbdbd;
+}
+
+.session-pagination button:disabled {
+     opacity: 0.5;
+     cursor: not-allowed;
+}
+
+#page-info {
+    font-size: 1em;
+    font-weight: bold;
+    color: #555;
+}
+
+
+/* Style cho lịch sử chi tiết */
+.session-detailed-history {
+     margin-top: 20px;
+     border-top: 1px solid #eee;
+     padding-top: 15px;
+     text-align: left; /* Căn trái chi tiết */
+}
+.session-detailed-history h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #555;
+    text-align: center; /* Căn giữa tiêu đề Chi tiết */
+}
+
+.session-detailed-history > div {
+    /* Style cho từng mục chi tiết */
+    background-color: #f5f5f5;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    text-align: left;
+    font-size: 0.9em;
+    border: 1px solid #eee;
+    word-break: break-word; /* Ngắt dòng */
+}
+.session-detailed-history span {
+    font-weight: bold;
+}
+
+
+/* Optional: Style cho scrollbar trong grid container */
+.session-history-grid-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.session-history-grid-container::-webkit-scrollbar-thumb {
+    background-color: #a5d6a7;
+    border-radius: 4px;
+}
+
+.session-history-grid-container::-webkit-scrollbar-track {
+    background-color: #e8f5e9;
+}
+
+/* Media query cho màn hình nhỏ hơn */
+@media (max-width: 768px) {
+     body {
+         padding: 10px; /* Giảm padding body */
+     }
+     .game-and-chat-container {
+         flex-direction: column; /* Xếp game và chat theo cột */
+         align-items: center; /* Căn giữa */
+         gap: 20px; /* Giảm khoảng cách */
+         margin-bottom: 15px;
+     }
+
+     .container, .chatbox {
+         width: 100%; /* Sử dụng toàn bộ chiều rộng khả dụng */
+         max-width: 350px; /* Giới hạn max width */
+         padding: 15px; /* Giảm padding */
+     }
+     .chatbox {
+         height: 350px; /* Chiều cao chatbox trên di động */
+     }
+
+
+     h1 {
+         font-size: 1.6em;
+     }
+
+     .balance {
+         font-size: 1em;
+         gap: 8px;
+     }
+
+     #reset-balance {
+         font-size: 0.7em;
+         padding: 3px 6px;
+     }
+
+     .dice-bowl-container {
+         width: 200px; /* Điều chỉnh kích thước container xúc xắc */
+         height: 120px;
+         margin: 15px auto;
+     }
+     .dice {
+         width: 50px; /* Điều chỉnh kích thước xúc xắc */
+         height: 50px;
+         margin: 0 6px;
+         gap: 3px;
+         padding: 6px;
+     }
+     .dot {
+         width: 10px; /* Điều chỉnh kích thước chấm */
+         height: 10px;
+     }
+
+
+     .timer {
+         font-size: 1.1em;
+         margin-bottom: 15px;
+     }
+
+     .betting-areas {
+         flex-direction: column;
+         padding: 10px;
+     }
+     .bet-area {
+         width: 100%;
+         margin: 8px 0;
+         padding: 10px;
+     }
+     .bet-area h2 { font-size: 1.4em; }
+     .bet-area p { font-size: 1em; }
+     .bet-amount-input {
+         width: 100%;
+         margin: 8px 0;
+         padding: 0 10px;
+     }
+     .bet-amount-input label { font-size: 0.9em; }
+     .bet-amount-input input[type="number"] { width: 70px; font-size: 1em; }
+     .quick-bet-buttons { gap: 3px; }
+     .quick-bet-button { font-size: 0.8em; padding: 3px 8px; }
+     .place-bet-button { font-size: 1em; padding: 8px 15px; margin-top: 10px;}
+
+
+     .result { font-size: 1.1em; margin-top: 20px; }
+     .individual-dice-result { font-size: 0.9em; margin-top: 5px;}
+
+     .history-section { margin-top: 20px; padding-top: 10px; }
+     .history-section h3 { margin-bottom: 10px; }
+     .history-sphere { width: 18px; height: 18px; margin: 0 2px; font-size: 0.6em;}
+
+
+     #start-game { font-size: 1.1em; padding: 10px 20px; margin-top: 20px; }
+
+
+     /* Style cho Lịch sử Phiên mới trên màn hình nhỏ */
+     .session-history-section {
+         padding: 15px;
+         margin: 15px auto;
+         width: 95%;
+     }
+     .session-history-section h3 { font-size: 1.3em; }
+     .session-counts { font-size: 1em; gap: 15px;}
+
+     .session-history-grid-container { padding: 8px; margin-bottom: 10px; }
+     .session-history-grid {
+         grid-template-columns: repeat(auto-fill, minmax(25px, 1fr)); /* Cột nhỏ hơn */
+         grid-auto-rows: 25px;
+         gap: 3px;
+     }
+     .history-grid-item { width: 25px; height: 25px; font-size: 0.7em;}
+
+      .session-pagination {
+         margin-top: 10px;
+         gap: 5px;
+     }
+     .session-pagination button {
+         padding: 4px 8px;
+         font-size: 0.8em;
+     }
+     #page-info {
+         font-size: 0.9em;
+     }
+
+
+     .session-detailed-history h4 { font-size: 1em; margin-bottom: 8px; }
+     .session-detailed-history > div { padding: 6px; margin-bottom: 6px; font-size: 0.8em; }
+
+
+     /* Chatbox trên màn hình nhỏ */
+     .chatbox {
+         padding: 10px;
+         height: 300px; /* Chiều cao chatbox trên di động */
+         margin-top: 15px;
+     }
+     .chatbox h3 { font-size: 1.1em; margin-bottom: 8px;}
+     .chat-messages { padding: 8px; gap: 6px;}
+     .chat-message { padding: 6px; font-size: 0.8em;}
+     .chat-input { padding-top: 8px; gap: 4px;}
+     .chat-input input[type="text"] { font-size: 0.8em; padding: 6px; }
+     .chat-input button { font-size: 0.8em; padding: 6px 12px; }
+
 }
