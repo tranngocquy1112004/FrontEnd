@@ -1,908 +1,630 @@
 body {
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Căn các khối từ trên xuống */
     min-height: 100vh;
-    background: linear-gradient(to bottom, #4CAF50, #2e7d32);
     margin: 0;
-    overflow-y: auto;
+    background-color: #e0e0e0; /* Nền xám nhạt */
     padding: 20px;
-    flex-direction: column; /* Body xếp các phần tử con theo cột */
+    box-sizing: border-box;
+    color: #333; /* Màu chữ mặc định */
 }
-
-/* Style cho container bọc cả game và chat để xếp cạnh nhau */
-.game-and-chat-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto 20px auto; /* Căn giữa và tạo khoảng cách dưới */
-    width: 100%; /* Đảm bảo container tổng sử dụng toàn bộ chiều rộng khả dụng */
-    flex-direction: row; /* Mặc định xếp ngang trên màn hình lớn */
-    justify-content: center; /* Căn giữa game và chat */
-}
-
 
 .container {
     background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    padding: 30px; /* Tăng padding */
+    border-radius: 10px; /* Bo tròn góc nhiều hơn */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Đổ bóng rõ hơn */
     text-align: center;
-    width: 450px; /* Giữ chiều rộng cố định trên màn hình lớn */
-    position: relative;
+    width: 650px; /* Tăng chiều rộng container */
+    margin-right: 30px; /* Khoảng cách với chat box */
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex-shrink: 0; /* Ngăn không cho co lại */
 }
 
-/* Style cho thanh chat */
-.chatbox {
-    width: 300px; /* Giữ chiều rộng cố định trên màn hình lớn */
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+h1, h3 {
+    color: #0056b3; /* Màu tiêu đề */
+}
+
+.account-section,
+.balance-section,
+.timer-section,
+.betting-area,
+.game-info,
+.game-controls,
+.history-section,
+.session-history-section {
+    margin-bottom: 25px; /* Tăng khoảng cách giữa các section */
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px; /* Thêm padding vào các section */
+    border: 1px solid #ddd; /* Thêm border nhẹ */
+    border-radius: 8px; /* Bo tròn góc các section */
+    background-color: #f9f9f9; /* Nền hơi xám cho các section */
+}
+
+.account-section {
     display: flex;
-    flex-direction: column;
-    flex-shrink: 0; /* Ngăn không cho co lại */
-    /* Điều chỉnh chiều cao để phù hợp với container game trên màn hình lớn */
-    height: 600px; /* Chiều cao cố định trên màn hình lớn */
-    justify-content: space-between; /* Đẩy input xuống dưới cùng */
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Khoảng cách giữa các phần tử */
+    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
 }
 
-.chatbox h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    text-align: center;
-    color: #333;
+.account-section label {
+    font-weight: bold;
 }
 
-.chat-messages {
-    flex-grow: 1; /* Choán hết không gian trống */
-    overflow-y: auto; /* Bật cuộn khi tin nhắn tràn */
-    border: 1px solid #eee;
-    border-radius: 5px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 10px; /* Khoảng cách giữa tin nhắn và input */
-}
-
-.chat-message {
-    background-color: #e0e0e0;
-    padding: 8px;
-    border-radius: 5px;
-    font-size: 0.9em;
-    text-align: left;
-    word-break: break-word; /* Ngắt dòng cho các từ dài */
-    max-width: 90%; /* Giới hạn chiều rộng tin nhắn */
-    align-self: flex-start; /* Mặc định căn trái cho tin nhắn AI */
-}
-
-/* Style cho tin nhắn của người chơi */
-.chat-message.self {
-    background-color: #c8e6c9; /* Màu xanh nhạt */
-    text-align: right;
-    align-self: flex-end; /* Căn phải cho tin nhắn của mình */
-}
-/* Style cho tin nhắn hệ thống */
-.chat-message.system {
-    background-color: #fff9c4; /* Màu vàng nhạt */
-    text-align: center;
-    font-style: italic;
-    font-size: 0.85em;
-    color: #555;
-}
-
-
-/* --- Style cho ô nhập và nút gửi tin nhắn --- */
-.chat-input {
-    display: flex;
-    gap: 5px;
-    padding-top: 10px; /* Khoảng cách với phần tin nhắn */
-    border-top: 1px solid #eee; /* Đường kẻ phân cách */
-}
-
-.chat-input input[type="text"] {
-    flex-grow: 1; /* Ô input choán hết không gian còn lại */
+.account-section input[type="text"] {
     padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 0.9em;
-    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
 }
 
-.chat-input button {
-    padding: 8px 15px;
-    background-color: #4CAF50; /* Màu xanh lá cây */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease-in-out;
-    font-size: 0.9em;
-    flex-shrink: 0; /* Ngăn nút bị co lại */
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+.account-section button {
+     padding: 8px 15px;
+     background-color: #007bff;
+     color: white;
+     border: none;
+     border-radius: 4px;
+     cursor: pointer;
+     transition: background-color 0.3s ease;
 }
 
-.chat-input button:hover:not(:disabled) {
-    background-color: #388E3C; /* Màu xanh đậm hơn khi hover */
-    transform: translateY(-1px);
-}
-.chat-input button:active:not(:disabled) {
-    background-color: #2E7D32; /* Màu xanh đậm hơn khi active */
-    transform: translateY(0);
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+.account-section button:hover {
+    background-color: #0056b3;
 }
 
-
-/* --- Các style đã có từ trước --- */
-h1 {
-    color: #333;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.balance {
-    font-size: 1.3em;
-    margin-bottom: 20px;
-    color: #ffeb3b;
+.balance-section span {
+    font-size: 1.2em; /* Kích thước chữ số tiền */
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap; /* Cho phép các mục xuống dòng nếu không đủ chỗ */
+    color: #28a745; /* Màu xanh lá cho tiền */
 }
 
-#reset-balance {
+.balance-section button {
+    margin-left: 15px; /* Khoảng cách với số tiền */
     padding: 5px 10px;
-    font-size: 0.9em;
-    background-color: #fbc02d;
-    color: #333;
+    background-color: #ffc107; /* Màu vàng */
+    color: #212529;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
 }
 
-#reset-balance:hover:not(:disabled) {
-    background-color: #f9a825;
-}
-#reset-balance:active:not(:disabled) {
-    background-color: #f57f17;
+.balance-section button:hover {
+     background-color: #e0a800;
 }
 
 
 .dice-bowl-container {
-    width: 250px; /* Tăng chiều rộng container để chứa cả 3 xúc xắc */
-    height: 140px; /* Tăng chiều cao container */
-    margin: 20px auto;
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 180px; /* Tăng kích thước */
+    height: 180px; /* Tăng kích thước */
+    margin: 30px auto;
 }
 
-.dice-container {
-     display: flex;
-    justify-content: center;
-    align-items: center;
+.dice-area {
+    position: absolute;
     width: 100%;
     height: 100%;
-     position: absolute; /* Đặt tuyệt đối so với container relative */
-     top: 0;
-     left: 0;
-     pointer-events: none; /* Ngăn chặn click/kéo vào container này */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1; /* Ensure dice are above the bowl visually */
 }
 
-
+/* Style cho viên xúc xắc */
 .dice {
-    width: 60px; /* Tăng kích thước xúc xắc */
-    height: 60px;
-    margin: 0 8px; /* Tăng khoảng cách giữa các xúc xắc */
-    border: 2px solid #555;
-    border-radius: 10px;
+    width: 50px; /* Tăng kích thước xúc xắc */
+    height: 50px; /* Tăng kích thước xúc xắc */
     background-color: #fff;
-    position: relative; /* Quan trọng cho việc định vị các chấm */
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 4px; /* Tăng khoảng cách giữa các chấm */
-    padding: 8px; /* Tăng padding */
-    box-sizing: border-box;
-    transform-style: preserve-3d;
-    transition: transform 0.1s ease-in-out;
-    transform-origin: center;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    pointer-events: none; /* Ngăn chặn click/kéo vào xúc xắc */
+    border: 2px solid #333; /* Border rõ hơn */
+    border-radius: 10px; /* Bo tròn góc nhiều hơn */
+    position: relative;
+    /* Các chấm sẽ được định vị bên trong dice */
 }
 
-.dot {
-    display: block;
-    width: 12px; /* Tăng kích thước chấm */
-    height: 12px;
-    background-color: #333;
+/* Style chung cho các chấm */
+.dice .dot {
+    position: absolute;
+    width: 10px; /* Kích thước chấm */
+    height: 10px; /* Kích thước chấm */
+    background-color: #000; /* Màu đen cho chấm */
     border-radius: 50%;
-    visibility: hidden;
+    /* Mặc định ẩn tất cả các chấm */
+    display: none;
 }
 
-/* Định vị các chấm trên lưới 3x3 */
-.dot-1 { grid-area: 3 / 1 / 4 / 2; } /* bottom-left */
-.dot-2 { grid-area: 2 / 2 / 3 / 3; } /* center */
-.dot-3 { grid-area: 1 / 3 / 2 / 4; } /* top-right */
-.dot-4 { grid-area: 1 / 1 / 2 / 2; } /* top-left */
-.dot-5 { grid-area: 3 / 3 / 4 / 4; } /* bottom-right */
-.dot-6 { grid-area: 2 / 1 / 3 / 2; } /* center-left */
-.dot-7 { grid-area: 2 / 3 / 3 / 4; } /* center-right */
+/* Định vị các loại chấm */
+.dice .dot-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.dice .dot-corner {
+    width: 8px; /* Chấm góc nhỏ hơn một chút */
+    height: 8px;
+}
+
+.dice .dot-top-left { top: 8px; left: 8px; } /* Cách viền 8px */
+.dice .dot-top-right { top: 8px; right: 8px; }
+.dice .dot-bottom-left { bottom: 8px; left: 8px; }
+.dice .dot-bottom-right { bottom: 8px; right: 8px; }
+
+.dice .dot-middle {
+    width: 8px;
+    height: 8px;
+    top: 50%;
+    transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+}
+.dice .dot-middle-left { left: 8px; }
+.dice .dot-middle-right { right: 8px; }
 
 
-/* Hiển thị chấm cho từng giá trị xúc xắc */
-.dice.show-1 .dot-2 { visibility: visible; }
-.dice.show-2 .dot-4,
-.dice.show-2 .dot-5 { visibility: visible; }
-.dice.show-3 .dot-4,
-.dice.show-3 .dot-2,
-.dice.show-3 .dot-5 { visibility: visible; }
-.dice.show-4 .dot-1,
-.dice.show-4 .dot-3,
-.dice.show-4 .dot-4,
-.dice.show-4 .dot-5 { visibility: visible; }
-.dice.show-5 .dot-1,
-.dice.show-5 .dot-2,
-.dice.show-5 .dot-3,
-.dice.show-5 .dot-4,
-.dice.show-5 .dot-5 { visibility: visible; }
-.dice.show-6 .dot-1,
-.dice.show-6 .dot-3,
-.dice.show-6 .dot-4,
-.dice.show-6 .dot-5,
-.dice.show-6 .dot-6,
-.dice.show-6 .dot-7 { visibility: visible; }
+/* Hiển thị chấm cho từng mặt xúc xắc */
+.dice.show-1 .dot-center { display: block; }
 
+.dice.show-2 .dot-top-left,
+.dice.show-2 .dot-bottom-right { display: block; }
+
+.dice.show-3 .dot-center,
+.dice.show-3 .dot-top-left,
+.dice.show-3 .dot-bottom-right { display: block; }
+
+.dice.show-4 .dot-top-left,
+.dice.show-4 .dot-top-right,
+.dice.show-4 .dot-bottom-left,
+.dice.show-4 .dot-bottom-right { display: block; }
+
+.dice.show-5 .dot-center,
+.dice.show-5 .dot-top-left,
+.dice.show-5 .dot-top-right,
+.dice.show-5 .dot-bottom-left,
+.dice.show-5 .dot-bottom-right { display: block; }
+
+.dice.show-6 .dot-top-left,
+.dice.show-6 .dot-top-right,
+.dice.show-6 .dot-bottom-left,
+.dice.show-6 .dot-bottom-right,
+.dice.show-6 .dot-middle-left,
+.dice.show-6 .dot-middle-right { display: block; }
+
+
+.dice.shaking {
+    animation: shake 0.5s infinite alternate;
+}
 
 @keyframes shake {
     0% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(-3px, -3px) rotate(-2deg); }
-    50% { transform: translate(3px, 3px) rotate(2deg); }
-    75% { transform: translate(-3px, 3px) rotate(-2deg); }
+    25% { transform: translate(8px, 0) rotate(3deg); } /* Tăng hiệu ứng */
+    75% { transform: translate(-8px, 0) rotate(-3deg); } /* Tăng hiệu ứng */
     100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-.dice.shaking {
-    animation: shake 0.15s infinite;
 }
 
 
 .bowl {
-    position: absolute; /* Đặt tuyệt đối so với .dice-bowl-container */
-    width: 220px;
-    height: 140px;
-    background: linear-gradient(to top, #795548, #5d4037);
-    border-radius: 50% 50% 15% 15%;
-    top: 50%; /* Căn giữa theo chiều dọc trong container */
-    left: 50%; /* Căn giữa theo chiều ngang trong container */
-    transform: translate(-50%, -50%); /* Dịch chuyển lại 50% kích thước của nó để căn giữa chính xác */
-    z-index: 10; /* Đảm bảo ở trên xúc xắc */
-    transition: opacity 0.5s ease-in-out; /* Chỉ transition opacity khi ẩn */
-    cursor: pointer; /* Thay đổi cursor khi có thể tương tác (sẽ được JS thay đổi) */
-    opacity: 1;
-    pointer-events: auto; /* Cho phép tương tác chuột */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px; /* Kích thước bát */
+    height: 180px; /* Kích thước bát */
+    background-color: rgba(100, 149, 237, 0.8); /* Màu cornflowerblue trong hơn */
+    border-radius: 50%;
+    border: 3px solid #0056b3; /* Border rõ và màu đậm hơn */
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.3s ease;
+}
+
+.bowl:hover {
+    background-color: rgba(100, 149, 237, 0.95); /* Sẫm hơn khi hover */
 }
 
 .bowl.hidden {
-    opacity: 0; /* Ẩn bát bằng opacity */
-    pointer-events: none; /* Không nhận tương tác chuột khi ẩn */
-    /* Không cần transform nữa khi ẩn, chỉ cần opacity 0 */
+    display: none;
 }
 
 
-.timer {
-    margin-bottom: 20px;
-    font-size: 1.4em;
-    color: #333;
+.timer-section span {
+    font-size: 2em; /* Kích thước chữ lớn hơn */
     font-weight: bold;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-    transition: color 0.3s ease;
+    color: #d9534f; /* Màu đỏ */
 }
 
-.timer.low-time {
-    color: #e53935;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+.timer-section span.low-time {
+    color: #f00; /* Đỏ rực khi hết giờ */
 }
 
 
-.betting-areas {
+.betting-area {
     display: flex;
     justify-content: space-around;
-    align-items: stretch;
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background-color: #fafafa;
+    align-items: center;
+    width: 100%;
+    gap: 20px; /* Khoảng cách giữa Tài, Input, Xỉu */
 }
 
-.bet-area {
-    flex: 1;
-    padding: 15px 10px;
+.bet-option {
+    text-align: center;
+    padding: 20px 15px; /* Tăng padding */
     border: 1px solid #ccc;
     border-radius: 8px;
-    text-align: center;
-    margin: 0 8px;
+    width: 150px; /* Chiều rộng cố định */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    justify-content: space-between; /* Căn đều nội dung */
+    min-height: 120px; /* Chiều cao tối thiểu */
 }
 
-.tai-area {
-    background-color: #e8f5e9;
-    border-color: #4CAF50;
-}
-
-.xiu-area {
-    background-color: #ffebee;
-     border-color: #f44336;
-}
-
-.bet-area:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-.bet-area:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-
-.bet-area h2 {
+.bet-option h3 {
     margin-top: 0;
-    color: #333;
-    font-size: 1.6em;
+    font-size: 1.5em;
+}
+
+.bet-option.tai {
+    background-color: #d4edda; /* Light green */
+    border-color: #28a745;
+    color: #155724;
+}
+
+.bet-option.xiu {
+    background-color: #f8d7da; /* Light red */
+    border-color: #dc3545;
+    color: #721c24;
+}
+
+.bet-option button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Khoảng cách với total bet */
+}
+
+.bet-option button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.bet-option button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+
+.bet-amount-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bet-amount-section label {
     margin-bottom: 5px;
 }
 
-.tai-area h2 {
-    color: #4CAF50;
-}
-.xiu-area h2 {
-    color: #f44336;
-}
-
-
-.bet-area p {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-    color: #555;
-}
-.bet-area span {
-    font-weight: bold;
-    color: #000;
-}
-
-
-.bet-amount-input {
-    text-align: center;
-    padding: 0 15px;
-}
-
-.bet-amount-input label {
-    display: block;
-    font-size: 1em;
-    margin-bottom: 8px;
-    color: #555;
-}
-
-.bet-amount-input input[type="number"] {
+.bet-amount-section input[type="number"] {
+    width: 100px;
     padding: 8px;
-    font-size: 1.1em;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 90px;
-    text-align: center;
-    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .quick-bet-buttons {
     display: flex;
+    gap: 8px; /* Khoảng cách giữa các nút quick bet */
+    flex-wrap: wrap; /* Cho phép xuống dòng */
     justify-content: center;
-    gap: 5px;
-    flex-wrap: wrap;
 }
 
-.quick-bet-button {
-    padding: 5px 10px;
-    font-size: 0.9em;
-    background-color: #e0e0e0;
-    color: #333;
-    border: 1px solid #ccc;
+.quick-bet-buttons button {
+    padding: 8px 12px;
+    background-color: #6c757d; /* Màu xám */
+    color: white;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
-.quick-bet-button:hover:not(:disabled) {
-    background-color: #d5d5d5;
+.quick-bet-buttons button:hover:not(:disabled) {
+    background-color: #5a6268;
 }
-.quick-bet-button:active:not(:disabled) {
-     background-color: #bdbdbd;
+
+.quick-bet-buttons button:disabled {
+     background-color: #cccccc;
+     cursor: not-allowed;
 }
 
 
-.place-bet-button {
-     padding: 10px 20px;
+.game-info {
+    margin-top: 25px;
     font-size: 1.1em;
-    background-color: #FF9800;
+    min-height: 40px; /* Đảm bảo không bị nhảy giao diện */
+}
+
+#game-result {
+    font-weight: bold;
+    color: #007bff;
+}
+
+#individual-dice-result {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 5px;
+}
+
+
+.game-controls button {
+    padding: 12px 25px; /* Tăng kích thước nút */
+    font-size: 1.3em;
+    background-color: #28a745; /* Màu xanh lá */
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease-in-out;
-    margin-top: 15px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
 }
 
-.place-bet-button:hover:not(:disabled) {
-    background-color: #f57c00;
-    transform: translateY(-1px);
+.game-controls button:hover:not(:disabled) {
+    background-color: #218838;
 }
-.place-bet-button:active:not(:disabled) {
-     background-color: #e65100;
-     transform: translateY(0);
-     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+.game-controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 
-button:disabled,
-input:disabled {
-    background-color: #cccccc !important;
-    cursor: not-allowed !important;
-    opacity: 0.6;
-    box-shadow: none !important;
-}
-
-
-.result {
-    margin-top: 25px;
-    font-size: 1.4em;
-    font-weight: bold;
-    min-height: 1.4em;
-    color: #00796b;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.individual-dice-result {
-    margin-top: 8px;
-    font-size: 1.1em;
-    color: #555;
-    min-height: 1.1em;
-    font-weight: normal;
-}
-
-.history-section {
-    margin-top: 25px;
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-    text-align: center;
-}
-
-.history-section h3 {
+.history-section h3,
+.session-history-section h3 {
     margin-top: 0;
     margin-bottom: 15px;
-    color: #333;
-    text-align: center;
 }
 
 .history-spheres-container {
     display: flex;
-    overflow-x: auto;
-    padding-bottom: 10px;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    max-width: 100%;
+    gap: 8px; /* Tăng khoảng cách giữa các quả cầu */
+    min-height: 40px; /* Tăng không gian dành cho lịch sử */
 }
 
 .history-sphere {
-    width: 22px;
-    height: 22px;
+    width: 35px; /* Tăng kích thước quả cầu */
+    height: 35px; /* Tăng kích thước quả cầu */
     border-radius: 50%;
-    margin: 0 4px;
-    flex-shrink: 0;
-    border: 2px solid #fff;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.8em;
-    color: #fff;
+    font-size: 0.9em; /* Kích thước chữ */
     font-weight: bold;
+    color: white;
+    border: 2px solid #fff; /* Border trắng nổi bật */
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Thêm bóng */
 }
 
 .history-sphere.tai {
-     background-color: #4CAF50; /* Màu xanh lá cây cho Tài */
-     color: #fff;
+    background-color: #28a745; /* Xanh lá đậm */
 }
 
 .history-sphere.xiu {
-     background-color: #f44336; /* Màu đỏ cho Xỉu */
-     color: #fff;
+    background-color: #dc3545; /* Đỏ đậm */
 }
 
-/* Style cho quả cầu Bộ ba đồng nhất */
 .history-sphere.triple {
-    background-color: #333; /* Màu tối cho Bộ ba */
-    color: #fff;
+    background-color: #ffc107; /* Vàng đậm */
+    color: #333; /* Màu chữ đen cho triple */
 }
 
 
-/* Ẩn thanh cuộn trên một số trình duyệt (tùy chọn) */
-.history-spheres-container::-webkit-scrollbar {
-    height: 8px;
-}
-
-.history-spheres-container::-webkit-scrollbar-thumb {
-    background-color: #a5d6a7;
-    border-radius: 4px;
-}
-
-.history-spheres-container::-webkit-scrollbar-track {
-    background-color: #e8f5e9;
-}
-
-
-#start-game {
-    padding: 12px 25px;
-    font-size: 1.2em;
-    background-color: #0288d1;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease-in-out;
-    margin-top: 30px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-#start-game:hover:not(:disabled) {
-    background-color: #0277bd;
-    transform: translateY(-1px);
-}
-#start-game:active:not(:disabled) {
-     background-color: #01579b;
-     transform: translateY(0);
-     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* --- Style cho Lịch sử Phiên mới --- */
 .session-history-section {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    margin: 20px auto; /* Căn giữa block */
-    max-width: 800px; /* Giới hạn chiều rộng */
-    width: 95%; /* Sử dụng phần trăm trên màn hình nhỏ */
+    text-align: left;
 }
 
-.session-history-section h3 {
-    margin-top: 0;
-    color: #333;
-}
-
-.session-counts {
+.session-summary {
     margin-bottom: 15px;
-    font-size: 1.1em;
-    color: #555;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.session-counts span {
     font-weight: bold;
-}
-
-#session-count-tai {
-    color: #4CAF50; /* Green for Tài */
-}
-
-#session-count-xiu {
-    color: #f44336; /* Red for Xỉu */
-}
-
-
-.session-history-grid-container {
-    /* Optional: Add border or background for the grid area */
-    padding: 10px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    overflow-x: auto; /* Bật cuộn ngang nếu cần */
-    margin-bottom: 15px;
+    font-size: 1.1em;
+    text-align: center; /* Căn giữa tổng kết phiên */
 }
 
 .session-history-grid {
     display: grid;
-    /* Số cột cố định, hàng tự động */
-    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); /* Tạo cột 30px, tự động lấp đầy */
-    grid-auto-rows: 30px; /* Chiều cao hàng 30px */
-    gap: 5px; /* Khoảng cách giữa các item */
-    justify-content: center; /* Căn giữa nội dung lưới */
-    min-width: max-content; /* Ngăn lưới co lại nhỏ hơn nội dung */
-    padding-bottom: 5px; /* Khoảng trống cho thanh cuộn */
+    grid-template-columns: repeat(auto-fill, minmax(25px, 1fr)); /* Responsive grid, item to hơn */
+    gap: 5px; /* Tăng khoảng cách giữa các grid item */
+    margin-bottom: 15px;
+    min-height: 30px; /* Reserve space */
 }
 
-/* Style cho từng item trong lưới (quả cầu kết quả) */
 .history-grid-item {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%; /* Làm tròn thành quả cầu */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8em;
-    font-weight: bold;
-    color: white;
-    border: 1px solid #ccc; /* Viền */
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0; /* Quan trọng: ngăn các item co lại khi có nhiều */
+    width: 25px; /* Kích thước item lưới */
+    height: 25px; /* Kích thước item lưới */
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 1px solid #fff; /* Border trắng */
 }
 
 .history-grid-item.tai {
-    background-color: #03a9f4; /* Blue color cho Tài */
-    border-color: #0288d1;
+    background-color: #28a745; /* Xanh lá đậm */
 }
 
 .history-grid-item.xiu {
-    background-color: #bdbdbd; /* Grey color cho Xỉu */
-    color: #333;
-    border-color: #9e9e9e;
+    background-color: #dc3545; /* Đỏ đậm */
 }
 
-/* Style cho quả cầu Bộ ba đồng nhất trong lưới */
 .history-grid-item.triple {
-    background-color: #333; /* Màu tối cho Bộ ba */
-    color: #fff;
-    border-color: #000;
+    background-color: #ffc107; /* Vàng đậm */
+    border: 2px dashed #343a40; /* Indicate triples visually */
 }
 
-/* Style cho phân trang */
 .session-pagination {
-    margin-top: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    margin-top: 15px;
+    gap: 10px; /* Khoảng cách giữa các phần tử phân trang */
 }
 
 .session-pagination button {
-    padding: 5px 10px;
-    font-size: 0.9em;
-    background-color: #e0e0e0;
-    color: #333;
-    border: 1px solid #ccc;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
 .session-pagination button:hover:not(:disabled) {
-     background-color: #d5d5d5;
-}
-
-.session-pagination button:active:not(:disabled) {
-    background-color: #bdbdbd;
+    background-color: #0056b3;
 }
 
 .session-pagination button:disabled {
-     opacity: 0.5;
-     cursor: not-allowed;
-}
-
-#page-info {
-    font-size: 1em;
-    font-weight: bold;
-    color: #555;
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 
-/* Style cho lịch sử chi tiết */
 .session-detailed-history {
-     margin-top: 20px;
-     border-top: 1px solid #eee;
-     padding-top: 15px;
-     text-align: left; /* Căn trái chi tiết */
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    max-height: 200px; /* Tăng chiều cao */
+    overflow-y: auto;
+    font-size: 0.95em;
+    line-height: 1.6; /* Giãn dòng */
 }
+
 .session-detailed-history h4 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: #555;
-    text-align: center; /* Căn giữa tiêu đề Chi tiết */
+    text-align: center; /* Căn giữa tiêu đề chi tiết */
 }
 
-.session-detailed-history > div {
-    /* Style cho từng mục chi tiết */
-    background-color: #f5f5f5;
-    padding: 8px;
-    margin-bottom: 8px;
+.session-detailed-history div {
+    margin-bottom: 5px; /* Khoảng cách giữa các mục chi tiết */
+}
+
+
+.chat-box {
+    background-color: #fff;
+    padding: 20px; /* Tăng padding */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px; /* Tăng chiều rộng chat box */
+    display: flex;
+    flex-direction: column;
+    height: 600px; /* Giữ chiều cao cố định */
+    box-sizing: border-box;
+}
+
+.chat-box h3 {
+    margin-top: 0;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    text-align: left;
+    padding: 10px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    margin-bottom: 10px; /* Tăng khoảng cách giữa tin nhắn */
+    padding: 8px 12px; /* Tăng padding tin nhắn */
+    border-radius: 15px; /* Bo tròn góc nhiều hơn */
+    word-wrap: break-word;
+    max-width: 85%; /* Giới hạn chiều rộng tin nhắn */
+}
+
+.chat-message.ai {
+    background-color: #e9e9eb;
+    align-self: flex-start;
+    margin-right: auto; /* Đẩy sang trái */
+}
+
+.chat-message.self {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+    margin-left: auto; /* Đẩy sang phải */
+}
+
+.chat-message.system {
+    background-color: #fffacd;
+    align-self: center;
+    font-style: italic;
     font-size: 0.9em;
-    border: 1px solid #eee;
-    word-break: break-word; /* Ngắt dòng */
-}
-.session-detailed-history span {
-    font-weight: bold;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 
-/* Optional: Style cho scrollbar trong grid container */
-.session-history-grid-container::-webkit-scrollbar {
-    height: 8px;
+.chat-input {
+    display: flex;
+    gap: 5px; /* Khoảng cách giữa input và button */
 }
 
-.session-history-grid-container::-webkit-scrollbar-thumb {
-    background-color: #a5d6a7;
-    border-radius: 4px;
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px; /* Tăng padding input */
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.session-history-grid-container::-webkit-scrollbar-track {
-    background-color: #e8f5e9;
+.chat-input button {
+    padding: 10px 15px;
+    background-color: #28a745; /* Màu xanh lá */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.chat-input button:hover {
+    background-color: #218838;
 }
 
-/* Media query cho màn hình nhỏ hơn */
-@media (max-width: 768px) {
-     body {
-         padding: 10px; /* Giảm padding body */
-     }
-     .game-and-chat-container {
-         flex-direction: column; /* Xếp game và chat theo cột */
-         align-items: center; /* Căn giữa */
-         gap: 20px; /* Giảm khoảng cách */
-         margin-bottom: 15px;
-     }
-
-     .container, .chatbox {
-         width: 100%; /* Sử dụng toàn bộ chiều rộng khả dụng */
-         max-width: 350px; /* Giới hạn max width */
-         padding: 15px; /* Giảm padding */
-     }
-     .chatbox {
-         height: 350px; /* Chiều cao chatbox trên di động */
-     }
-
-
-     h1 {
-         font-size: 1.6em;
-     }
-
-     .balance {
-         font-size: 1em;
-         gap: 8px;
-     }
-
-     #reset-balance {
-         font-size: 0.7em;
-         padding: 3px 6px;
-     }
-
-     .dice-bowl-container {
-         width: 200px; /* Điều chỉnh kích thước container xúc xắc */
-         height: 120px;
-         margin: 15px auto;
-     }
-     .dice {
-         width: 50px; /* Điều chỉnh kích thước xúc xắc */
-         height: 50px;
-         margin: 0 6px;
-         gap: 3px;
-         padding: 6px;
-     }
-     .dot {
-         width: 10px; /* Điều chỉnh kích thước chấm */
-         height: 10px;
-     }
-
-
-     .timer {
-         font-size: 1.1em;
-         margin-bottom: 15px;
-     }
-
-     .betting-areas {
-         flex-direction: column;
-         padding: 10px;
-     }
-     .bet-area {
-         width: 100%;
-         margin: 8px 0;
-         padding: 10px;
-     }
-     .bet-area h2 { font-size: 1.4em; }
-     .bet-area p { font-size: 1em; }
-     .bet-amount-input {
-         width: 100%;
-         margin: 8px 0;
-         padding: 0 10px;
-     }
-     .bet-amount-input label { font-size: 0.9em; }
-     .bet-amount-input input[type="number"] { width: 70px; font-size: 1em; }
-     .quick-bet-buttons { gap: 3px; }
-     .quick-bet-button { font-size: 0.8em; padding: 3px 8px; }
-     .place-bet-button { font-size: 1em; padding: 8px 15px; margin-top: 10px;}
-
-
-     .result { font-size: 1.1em; margin-top: 20px; }
-     .individual-dice-result { font-size: 0.9em; margin-top: 5px;}
-
-     .history-section { margin-top: 20px; padding-top: 10px; }
-     .history-section h3 { margin-bottom: 10px; }
-     .history-sphere { width: 18px; height: 18px; margin: 0 2px; font-size: 0.6em;}
-
-
-     #start-game { font-size: 1.1em; padding: 10px 20px; margin-top: 20px; }
-
-
-     /* Style cho Lịch sử Phiên mới trên màn hình nhỏ */
-     .session-history-section {
-         padding: 15px;
-         margin: 15px auto;
-         width: 95%;
-     }
-     .session-history-section h3 { font-size: 1.3em; }
-     .session-counts { font-size: 1em; gap: 15px;}
-
-     .session-history-grid-container { padding: 8px; margin-bottom: 10px; }
-     .session-history-grid {
-         grid-template-columns: repeat(auto-fill, minmax(25px, 1fr)); /* Cột nhỏ hơn */
-         grid-auto-rows: 25px;
-         gap: 3px;
-     }
-     .history-grid-item { width: 25px; height: 25px; font-size: 0.7em;}
-
-      .session-pagination {
-         margin-top: 10px;
-         gap: 5px;
-     }
-     .session-pagination button {
-         padding: 4px 8px;
-         font-size: 0.8em;
-     }
-     #page-info {
-         font-size: 0.9em;
-     }
-
-
-     .session-detailed-history h4 { font-size: 1em; margin-bottom: 8px; }
-     .session-detailed-history > div { padding: 6px; margin-bottom: 6px; font-size: 0.8em; }
-
-
-     /* Chatbox trên màn hình nhỏ */
-     .chatbox {
-         padding: 10px;
-         height: 300px; /* Chiều cao chatbox trên di động */
-         margin-top: 15px;
-     }
-     .chatbox h3 { font-size: 1.1em; margin-bottom: 8px;}
-     .chat-messages { padding: 8px; gap: 6px;}
-     .chat-message { padding: 6px; font-size: 0.8em;}
-     .chat-input { padding-top: 8px; gap: 4px;}
-     .chat-input input[type="text"] { font-size: 0.8em; padding: 6px; }
-     .chat-input button { font-size: 0.8em; padding: 6px 12px; }
-
+/* Responsive adjustments (Optional - basic example) */
+@media (max-width: 992px) {
+    body {
+        flex-direction: column; /* Stack game and chat vertically */
+        align-items: center;
+    }
+    .container {
+        margin-right: 0;
+        margin-bottom: 20px; /* Space below game area */
+        width: 95%; /* Use more width on smaller screens */
+    }
+    .chat-box {
+         width: 95%; /* Use more width on smaller screens */
+         height: 400px; /* Adjust chat height */
+    }
+    .betting-area {
+        flex-direction: column; /* Stack betting options */
+        gap: 15px;
+    }
+    .bet-option {
+        width: 80%; /* Make bet options wider */
+    }
+    .account-section {
+        flex-direction: column;
+        gap: 15px;
+    }
 }
