@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ví Dụ Javascript Đa Khái Niệm</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Các Khái Niệm Javascript</h1>
+
+        <section id="array-loops-section" class="concept-section">
+            <h2>1. Arrays và Vòng lặp (forEach)</h2>
+            <p>Dưới đây là một mảng các loại trái cây:</p>
+            <ul id="fruitList">
+                </ul>
+            <button id="addFruitBtn">Thêm "Táo"</button>
+            <button id="removeLastFruitBtn">Xóa cuối</button>
+             <input type="text" id="fruitFilterInput" placeholder="Lọc theo tên...">
+             <button id="filterFruitsBtn">Lọc</button>
+             <ul id="filteredFruitList" style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                 </ul>
+        </section>
+
+        <section id="objects-section" class="concept-section">
+            <h2>2. Objects</h2>
+            <p>Thông tin một người:</p>
+            <div id="personInfo">
+                </div>
+            <button id="updateAgeBtn">Tăng tuổi</button>
+        </section>
+
+        <section id="classes-section" class="concept-section">
+            <h2>3. Classes (OOP)</h2>
+            <p>Tạo đối tượng "Xe hơi" từ Class:</p>
+            <input type="text" id="carMakeInput" placeholder="Hãng xe...">
+            <input type="text" id="carModelInput" placeholder="Mẫu xe...">
+             <input type="number" id="carYearInput" placeholder="Năm..." min="1900" max="2099">
+            <button id="createCarBtn">Tạo Xe</button>
+            <div id="carInfo">
+                 </div>
+             <button id="carDriveBtn" style="display: none;">Lái xe (Console)</button>
+        </section>
+
+        <section id="prototypes-section" class="concept-section">
+            <h2>4. Prototypes</h2>
+            <p>Minh họa cơ chế kế thừa của JS (kiểu cũ và nền tảng của Class):</p>
+             <input type="text" id="animalNameInput" placeholder="Tên con vật...">
+             <button id="createAnimalBtn">Tạo con vật</button>
+             <div id="animalActions" style="margin-top: 10px;">
+                  </div>
+             <div id="animalOutput" style="margin-top: 10px; font-style: italic; color: #555;">
+                 </div>
+        </section>
+
+        <section id="try-catch-section" class="concept-section">
+            <h2>5. try...catch (Xử lý Lỗi)</h2>
+            <p>Nhập hai số để chia:</p>
+            <input type="number" id="num1Input" placeholder="Số thứ nhất">
+            <input type="number" id="num2Input" placeholder="Số thứ hai">
+            <button id="divideBtn">Chia</button>
+            <div id="divisionResult" style="margin-top: 10px;">
+                Kết quả:
+            </div>
+        </section>
+
+        <section id="webstorage-section" class="concept-section">
+            <h2>6. Web Storage (localStorage)</h2>
+            <p>Lưu và tải một giá trị đơn giản trong trình duyệt:</p>
+            <input type="text" id="localStorageInput" placeholder="Nhập gì đó để lưu...">
+            <button id="saveToStorageBtn">Lưu</button>
+            <button id="loadFromStorageBtn">Tải</button>
+            <div id="storageOutput" style="margin-top: 10px;">
+                Giá trị đã tải:
+            </div>
+        </section>
+
+         <section id="async-fetch-section" class="concept-section">
+            <h2>7. Fetch API, Promises, async/await (Bất đồng bộ)</h2>
+            <p>Tải dữ liệu từ một API công khai (JSONPlaceholder):</p>
+            <button id="fetchDataBtn">Tải Dữ liệu</button>
+            <div id="fetchStatus" style="margin-top: 10px;">Trạng thái: Đang chờ...</div>
+            <pre id="fetchResult" style="margin-top: 10px; max-height: 200px; overflow-y: auto; background-color: #f8f8f8; padding: 10px; border: 1px solid #ddd;"></pre>
+        </section>
+
+        <section id="scope-section" class="concept-section">
+             <h2>8. Scope (Phạm vi Biến)</h2>
+             <p>Nhấn các nút để xem biến nào có thể truy cập được ở đâu.</p>
+             <button id="checkGlobalScopeBtn">Kiểm tra Global Scope</button>
+             <button id="checkFunctionScopeBtn">Kiểm tra Function Scope</button>
+             <button id="checkBlockScopeBtn">Kiểm tra Block Scope</button>
+             <div id="scopeOutput" style="margin-top: 10px;">
+                 Kết quả kiểm tra:
+             </div>
+         </section>
+
+         <section id="modules-section" class="concept-section">
+             <h2>9. Modules</h2>
+             <p><strong>Khái niệm:</strong> Modules (ES6 Modules) là cách để chia code JavaScript thành các file riêng biệt. Mỗi file là một module. Module giúp:</p>
+             <ul>
+                 <li>Ngăn xung đột tên biến (mỗi module có scope riêng).</li>
+                 <li>Quản lý code tốt hơn, dễ bảo trì.</li>
+                 <li>Tái sử dụng code giữa các dự án.</li>
+             </ul>
+             <p><strong>Cách sử dụng:</strong></p>
+             <p>Trong file JS muốn xuất (export) thứ gì đó (biến, hàm, class):</p>
+             <pre><code>// file myUtils.js
+export const PI = 3.14;
+export function add(a, b) {
+  return a + b;
+}
+export class MyClass { ... }
+             </code></pre>
+             <p>Trong file JS muốn nhập (import) thứ đó:</p>
+              <pre><code>// file script.js
+import { PI, add } from './myUtils.js';
+import MyClass from './myModule.js'; // export default
+
+console.log(PI); // 3.14
+console.log(add(2, 3)); // 5
+const instance = new MyClass();
+              </code></pre>
+              <p>Trong thẻ `&lt;script&gt;` của HTML, phải thêm `type="module"`:</p>
+              <pre><code>&lt;script src="script.js" type="module"&gt;&lt;/script&gt;</code></pre>
+              <p><strong>Lưu ý:</strong> Cần chạy trang web này qua một local server (ví dụ: Live Server trong VS Code, hoặc Python SimpleHTTPServer) để `import` hoạt động do các hạn chế bảo mật của trình duyệt (CORS) khi chạy trực tiếp từ file (`file://`).</p>
+         </section>
+
+
+    </div> <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px; /* Rộng hơn một chút */
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.concept-section {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #f9f9f9;
+}
+
+.concept-section h2 {
+    margin-top: 0;
+    color: #0056b3;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* Style cho input, button */
+.concept-section input[type="text"],
+.concept-section input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5px;
+    margin-bottom: 10px; /* Added margin-bottom */
+    font-size: 1em;
+}
+
+.concept-section button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+     margin-right: 5px;
+     margin-bottom: 10px; /* Added margin-bottom */
+}
+
+.concept-section button:hover {
+    background-color: #0056b3;
+}
+
+/* Style cho output areas */
+.concept-section ul,
+.concept-section div {
+    margin-top: 10px;
+    padding-left: 20px; /* Add padding for lists */
+}
+
+.concept-section ul li {
+    background-color: #eee;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    word-break: break-word;
+}
+
+/* Style cho pre (ví dụ Fetch) */
+.concept-section pre {
+    white-space: pre-wrap; /* Giữ định dạng xuống dòng */
+}
+
+code {
+    background-color: #e9e9e9;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
