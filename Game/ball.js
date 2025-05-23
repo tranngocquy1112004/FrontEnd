@@ -2,8 +2,8 @@ class Ball{
     constructor(canvas){
     this.canvas = canvas;
     this.x = 200;
-    this.dx = 5;
-    this.dy = 10;
+    this.dx = 2;
+    this.dy = 3;
     this.y = 450;
     this.radius = 15;
     }
